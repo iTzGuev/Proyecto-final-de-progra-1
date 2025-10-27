@@ -81,10 +81,23 @@ public:
         }
 
         contenedor.guardarDatos(jugador1, jugador2);
-        enCurso = false;
-    }
 
-    void mostrarHistorial() {
-        contenedor.cargarDatos();
+        // Preguntar si quieren volver a jugar
+        char respuesta;
+        cout << "\n¿Quieren jugar otra vez? (s/n): ";
+        cin >> respuesta;
+        cin.ignore();
+
+        if (respuesta == 's' || respuesta == 'S') {
+            // Reiniciar tiempos para nueva partida
+            jugador1.registrarTiempo(0);
+            jugador2.registrarTiempo(0);
+
+            system("cls");
+            iniciarJuego(); // Volver a empezar el juego
+        }
+        else {
+            enCurso = false;
+        }
     }
 };
