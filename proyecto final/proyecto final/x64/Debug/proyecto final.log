@@ -1,0 +1,11 @@
+﻿  proyecto final.cpp
+C:\bretes de la u\progra 1 (2025)\proyecto final\proyecto final\proyecto final\ContenedorJugadores.h(19,39): warning C4101: 'e': variable local sin referencia
+  (compilando archivo de origen "proyecto%20final.cpp")
+  
+C:\bretes de la u\progra 1 (2025)\proyecto final\proyecto final\proyecto final\ContenedorJugadores.h(52,24): warning C4267: 'return': conversión de 'size_t' a 'int'; posible pérdida de datos
+  (compilando archivo de origen "proyecto%20final.cpp")
+  
+C:\bretes de la u\progra 1 (2025)\proyecto final\proyecto final\proyecto final\ContenedorJugadores.h(139,26): warning C4267: 'inicializando': conversión de 'size_t' a 'int'; posible pérdida de datos
+  (compilando archivo de origen "proyecto%20final.cpp")
+  
+  proyecto final.vcxproj -> C:\bretes de la u\progra 1 (2025)\proyecto final\proyecto final\x64\Debug\proyecto final.exe
