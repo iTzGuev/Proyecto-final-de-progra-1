@@ -89,12 +89,16 @@ public:
         cin.ignore();
 
         if (respuesta == 's' || respuesta == 'S') {
-            // Reiniciar tiempos para nueva partida
+            // SOLUCIÓN: Reiniciar TODOS los contadores para nueva partida
             jugador1.registrarTiempo(0);
             jugador2.registrarTiempo(0);
+            jugador1.setVictorias(0);    // AGREGAR ESTA LÍNEA
+            jugador1.setPartidas(0);     // AGREGAR ESTA LÍNEA
+            jugador2.setVictorias(0);    // AGREGAR ESTA LÍNEA
+            jugador2.setPartidas(0);     // AGREGAR ESTA LÍNEA
 
             system("cls");
-            iniciarJuego(); // Volver a empezar el juego
+            iniciarJuego();
         }
         else {
             enCurso = false;
