@@ -4,7 +4,113 @@
 #include "Juego.h"
 #include "Tempo.h"
 
-//Función del menú principal
+// Función para el submenú de modos de juego
+void menuModosJuego() {
+    int opcion = 0;
+
+    do {
+        system("cls");
+        cout << "=============================\n";
+        cout << "      MODOS DE JUEGO       \n";
+        cout << "=============================\n";
+        cout << "1. Duelo Clasico (1 vs 1)\n";
+        cout << "2. Rondas Multiples (Mejor de X)\n";
+        cout << "3. Modo Practica (Proximamente)\n";
+        cout << "4. Torneo (Proximamente)\n";
+        cout << "5. Desafio de Velocidad (Proximamente)\n";
+        cout << "6. Volver al menu principal\n";
+        cout << "=============================\n";
+        cout << "Seleccione un modo: ";
+        cin >> opcion;
+        cin.ignore();
+
+        switch (opcion) {
+        case 1: {
+            // Duelo Clásico 1v1
+            system("cls");
+            string nombre1, nombre2;
+            cout << "=== DUELO CLASICO ===\n\n";
+            cout << "Ingrese nombre del Jugador 1: ";
+            getline(cin, nombre1);
+            cout << "Ingrese nombre del Jugador 2: ";
+            getline(cin, nombre2);
+
+            Jugador j1(nombre1, 'a');
+            Jugador j2(nombre2, 'l');
+
+            Juego juego(j1, j2, 3);
+            juego.modoDueloClasico();
+
+            cout << "\nPresione Enter para volver al menu...";
+            cin.ignore();
+            break;
+        }
+
+        case 2: {
+            // Rondas Múltiples
+            system("cls");
+            string nombre1, nombre2;
+            int numRondas;
+
+            cout << "=== RONDAS MULTIPLES ===\n\n";
+            cout << "Ingrese nombre del Jugador 1: ";
+            getline(cin, nombre1);
+            cout << "Ingrese nombre del Jugador 2: ";
+            getline(cin, nombre2);
+
+            cout << "\nSeleccione cantidad de rondas:\n";
+            cout << "1. Mejor de 3\n";
+            cout << "2. Mejor de 5\n";
+            cout << "3. Mejor de 7\n";
+            cout << "Opcion: ";
+            cin >> numRondas;
+            cin.ignore();
+
+            int rondasTotal;
+            switch (numRondas) {
+            case 1: rondasTotal = 3; break;
+            case 2: rondasTotal = 5; break;
+            case 3: rondasTotal = 7; break;
+            default:
+                cout << "Opcion invalida, usando mejor de 3.\n";
+                rondasTotal = 3;
+                this_thread::sleep_for(chrono::seconds(1));
+            }
+
+            Jugador j1(nombre1, 'a');
+            Jugador j2(nombre2, 'l');
+
+            Juego juego(j1, j2, 3);
+            juego.modoRondasMultiples(rondasTotal);
+
+            cout << "\nPresione Enter para volver al menu...";
+            cin.ignore();
+            break;
+        }
+
+        case 3:
+        case 4:
+        case 5:
+            system("cls");
+            cout << "\n=== PROXIMAMENTE ===\n";
+            cout << "Este modo de juego estara disponible pronto.\n";
+            cout << "\nPresione Enter para volver...";
+            cin.ignore();
+            break;
+
+        case 6:
+            // Volver al menú principal
+            break;
+
+        default:
+            cout << "Opcion invalida. Intente de nuevo.\n";
+            this_thread::sleep_for(chrono::seconds(2));
+            break;
+        }
+    } while (opcion != 6);
+}
+
+// Función del menú principal
 void menuPrincipal() {
     ContenedorJugadores contenedor("jugadores.json");
     int opcion = 0;
@@ -27,21 +133,8 @@ void menuPrincipal() {
 
         switch (opcion) {
         case 1: {
-            system("cls");
-            string nombre1, nombre2;
-            cout << "Ingrese nombre del Jugador 1: ";
-            getline(cin, nombre1);
-            cout << "Ingrese nombre del Jugador 2: ";
-            getline(cin, nombre2);
-
-            Jugador j1(nombre1, 'a');
-            Jugador j2(nombre2, 'l');
-
-            Juego juego(j1, j2, 3);
-            juego.iniciarJuego();
-
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            // Llamar al submenú de modos de juego
+            menuModosJuego();
             break;
         }
 
@@ -150,7 +243,7 @@ void menuPrincipal() {
     } while (opcion != 6);
 }
 
-// Función principal - AQUÍ ESTÁ EL MAIN
+// Función principal
 int main() {
     menuPrincipal();
     return 0;
