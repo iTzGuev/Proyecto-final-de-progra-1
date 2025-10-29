@@ -1,3 +1,4 @@
+#pragma once
 #include "Librerias.h"
 #include "Jugador.h"
 #include "ContenedorJugadores.h"
@@ -62,8 +63,13 @@ private:
     }
 
     // Método privado para mostrar resultado final y guardar
-    void finalizarPartida(int ganador) {
+    void finalizarPartida(int ganador, const string& modo) {
         cout << "\n=== RESULTADOS ===\n";
+
+        // Establecer el modo de juego antes de guardar
+        jugador1.setModoJuego(modo);
+        jugador2.setModoJuego(modo);
+
         jugador1.incrementarPartidas();
         jugador2.incrementarPartidas();
 
@@ -93,7 +99,7 @@ public:
         ejecutarRonda();
 
         int ganador = determinarGanadorRonda();
-        finalizarPartida(ganador);
+        finalizarPartida(ganador, "clasico");
 
         // Preguntar si quieren volver a jugar
         char respuesta;
@@ -201,10 +207,9 @@ public:
             cout << "*** EMPATE PERFECTO! ***\n";
         }
 
-        finalizarPartida(ganadorFinal);
+        finalizarPartida(ganadorFinal, "rondas");
         enCurso = false;
     }
-    // Agregar este método público en la clase Juego, después de modoRondasMultiples()
 
     // MODO 3: Modo Práctica (un solo jugador, sin guardar estadísticas)
     void modoPractica(Jugador& jugador, int numeroIntentos = 5) {
@@ -316,6 +321,7 @@ public:
 
         enCurso = false;
     }
+
     // Método legacy para mantener compatibilidad
     void iniciarJuego() {
         modoDueloClasico();
