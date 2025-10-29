@@ -1,0 +1,20 @@
+{
+    "juego": "Duelo de Reflejos",
+    "jugadores": [
+        {
+            "mejor_tiempo": 0.4222078025341034,
+            "nombre": "ed",
+            "partidas": 6,
+            "tecla": "a",
+            "victorias": 3
+        },
+        {
+            "mejor_tiempo": 0.43800678849220276,
+            "nombre": "ar",
+            "partidas": 6,
+            "tecla": "l",
+            "victorias": 3
+        }
+    ],
+    "version": "1.0"
+}
