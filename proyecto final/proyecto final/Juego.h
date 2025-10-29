@@ -204,7 +204,118 @@ public:
         finalizarPartida(ganadorFinal);
         enCurso = false;
     }
+    // Agregar este método público en la clase Juego, después de modoRondasMultiples()
 
+    // MODO 3: Modo Práctica (un solo jugador, sin guardar estadísticas)
+    void modoPractica(Jugador& jugador, int numeroIntentos = 5) {
+        enCurso = true;
+        float mejorTiempo = 0;
+        float tiempoPromedio = 0;
+        int intentosCompletados = 0;
+
+        cout << "\n========================================\n";
+        cout << "         MODO PRACTICA\n";
+        cout << "========================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "Intentos: " << numeroIntentos << "\n";
+        cout << "Tecla: [" << jugador.getTecla() << "]\n";
+        cout << "========================================\n";
+        cout << "\nEste modo NO afecta tus estadisticas.\n";
+        cout << "Presiona Enter para comenzar...";
+        cin.ignore();
+
+        for (int intento = 1; intento <= numeroIntentos; intento++) {
+            system("cls");
+            cout << "\n========================================\n";
+            cout << "    INTENTO " << intento << " DE " << numeroIntentos << "\n";
+            cout << "========================================\n";
+
+            if (mejorTiempo > 0) {
+                cout << "Mejor tiempo hasta ahora: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+            }
+
+            cout << "\nPresiona [" << jugador.getTecla() << "] cuando veas ¡DISPARA!\n";
+            cout << "\nPreparate...\n";
+
+            // Cuenta regresiva
+            for (int i = tiempoCuentaRegresiva; i > 0; --i) {
+                cout << i << "...\n";
+                this_thread::sleep_for(chrono::seconds(1));
+            }
+            cout << "\n¡DISPARA!\n";
+
+            temporizador.iniciar();
+            bool teclaPresionada = false;
+            float tiempoReaccion = 0;
+
+            while (!teclaPresionada) {
+                if (_kbhit()) {
+                    char tecla = _getch();
+                    temporizador.detener();
+                    tiempoReaccion = temporizador.obtenerDiferencia();
+
+                    if (tecla == jugador.getTecla()) {
+                        teclaPresionada = true;
+                        intentosCompletados++;
+                        tiempoPromedio += tiempoReaccion;
+
+                        cout << "\nTiempo de reaccion: " << fixed << setprecision(4) << tiempoReaccion << " segundos\n";
+
+                        // Actualizar mejor tiempo
+                        if (mejorTiempo == 0 || tiempoReaccion < mejorTiempo) {
+                            mejorTiempo = tiempoReaccion;
+                            cout << "*** ¡NUEVO RECORD PERSONAL! ***\n";
+                        }
+
+                        // Feedback según el tiempo
+                        if (tiempoReaccion < 0.2) {
+                            cout << "¡INCREIBLE! Reflejos de campeon!\n";
+                        }
+                        else if (tiempoReaccion < 0.3) {
+                            cout << "¡Excelente! Muy rapido!\n";
+                        }
+                        else if (tiempoReaccion < 0.4) {
+                            cout << "¡Bien! Buen tiempo.\n";
+                        }
+                        else if (tiempoReaccion < 0.5) {
+                            cout << "No esta mal, puedes mejorar.\n";
+                        }
+                        else {
+                            cout << "Necesitas mas practica.\n";
+                        }
+                    }
+                    else {
+                        cout << "\nTecla incorrecta. Presiona [" << jugador.getTecla() << "]\n";
+                    }
+                }
+            }
+
+            if (intento < numeroIntentos) {
+                cout << "\nPresiona Enter para el siguiente intento...";
+                cin.ignore();
+            }
+        }
+
+        // Mostrar resumen final
+        system("cls");
+        cout << "\n========================================\n";
+        cout << "      RESUMEN DE PRACTICA\n";
+        cout << "========================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "Intentos completados: " << intentosCompletados << "\n";
+        cout << "----------------------------------------\n";
+        cout << "Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << " segundos\n";
+
+        if (intentosCompletados > 0) {
+            float promedio = tiempoPromedio / intentosCompletados;
+            cout << "Tiempo promedio: " << fixed << setprecision(4) << promedio << " segundos\n";
+        }
+
+        cout << "========================================\n";
+        cout << "\nRecuerda: Este modo NO afecta tu ranking.\n";
+
+        enCurso = false;
+    }
     // Método legacy para mantener compatibilidad
     void iniciarJuego() {
         modoDueloClasico();

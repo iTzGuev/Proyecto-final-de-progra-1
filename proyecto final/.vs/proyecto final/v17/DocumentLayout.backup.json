@@ -48,7 +48,7 @@
               "RelativeDocumentMoniker": "proyecto final\\proyecto final.cpp",
               "ToolTip": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\proyecto final.cpp",
               "RelativeToolTip": "proyecto final\\proyecto final.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAPkAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-27T04:09:42.324Z",
               "EditorCaption": ""
@@ -61,7 +61,7 @@
               "RelativeDocumentMoniker": "proyecto final\\Juego.h",
               "ToolTip": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\Juego.h",
               "RelativeToolTip": "proyecto final\\Juego.h",
-              "ViewState": "AgIAAMQAAAAAAAAAAAAAANMAAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAEIBAAAAAAAAAAAAAD0BAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-10-29T01:08:16.789Z",
               "EditorCaption": ""
@@ -76,8 +76,7 @@
               "RelativeToolTip": "proyecto final\\Jugador.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-29T01:08:17.675Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-29T01:08:17.675Z"
             },
             {
               "$type": "Document",
@@ -89,8 +88,7 @@
               "RelativeToolTip": "proyecto final\\ContenedorJugadores.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-29T01:08:15.647Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-29T01:08:15.647Z"
             },
             {
               "$type": "Document",
@@ -102,8 +100,7 @@
               "RelativeToolTip": "proyecto final\\Tempo.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-29T01:08:19.713Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-29T01:08:19.713Z"
             },
             {
               "$type": "Document",
@@ -115,8 +112,7 @@
               "RelativeToolTip": "proyecto final\\Librerias.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-29T01:08:18.668Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-29T01:08:18.668Z"
             }
           ]
         }
