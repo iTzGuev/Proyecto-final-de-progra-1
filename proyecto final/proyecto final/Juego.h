@@ -93,33 +93,39 @@ public:
         : jugador1(j1), jugador2(j2), tiempoCuentaRegresiva(cuenta), enCurso(false) {
     }
 
-    // MODO 1: Duelo Clásico (una sola ronda)
+    // MODO 1: Duelo Clásico (una sola ronda) - CORREGIDO SIN RECURSIVIDAD
     void modoDueloClasico() {
-        enCurso = true;
-        ejecutarRonda();
+        bool quiereJugar = true;
 
-        int ganador = determinarGanadorRonda();
-        finalizarPartida(ganador, "clasico");
+        while (quiereJugar) {
+            enCurso = true;
+            ejecutarRonda();
 
-        // Preguntar si quieren volver a jugar
-        char respuesta;
-        cout << "\n¿Quieren jugar otra vez? (s/n): ";
-        cin >> respuesta;
-        cin.ignore();
+            int ganador = determinarGanadorRonda();
+            finalizarPartida(ganador, "clasico");
 
-        if (respuesta == 's' || respuesta == 'S') {
-            jugador1.registrarTiempo(0);
-            jugador2.registrarTiempo(0);
-            jugador1.setVictorias(0);
-            jugador1.setPartidas(0);
-            jugador2.setVictorias(0);
-            jugador2.setPartidas(0);
-            system("cls");
-            modoDueloClasico();
+            // Preguntar si quieren volver a jugar
+            char respuesta;
+            cout << "\n¿Quieren jugar otra vez? (s/n): ";
+            cin >> respuesta;
+            cin.ignore();
+
+            if (respuesta == 's' || respuesta == 'S') {
+                // Resetear para nueva partida
+                jugador1.registrarTiempo(0);
+                jugador2.registrarTiempo(0);
+                jugador1.setVictorias(0);
+                jugador1.setPartidas(0);
+                jugador2.setVictorias(0);
+                jugador2.setPartidas(0);
+                system("cls");
+            }
+            else {
+                quiereJugar = false;
+            }
         }
-        else {
-            enCurso = false;
-        }
+
+        enCurso = false;
     }
 
     // MODO 2: Rondas Múltiples (mejor de X)
