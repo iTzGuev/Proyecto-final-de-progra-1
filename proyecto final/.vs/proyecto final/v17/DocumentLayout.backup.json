@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\proyecto final.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|solutionrelative:proyecto final\\proyecto final.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\ContenedorJugadores.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|solutionrelative:proyecto final\\ContenedorJugadores.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\Juego.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|solutionrelative:proyecto final\\Juego.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\proyecto final.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|solutionrelative:proyecto final\\proyecto final.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6DA5714C-A615-408B-A868-EB978614815C}|proyecto final\\proyecto final.vcxproj|C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\Jugador.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -34,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,28 +42,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "proyecto final.cpp",
               "DocumentMoniker": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\proyecto final.cpp",
               "RelativeDocumentMoniker": "proyecto final\\proyecto final.cpp",
               "ToolTip": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\proyecto final.cpp",
               "RelativeToolTip": "proyecto final\\proyecto final.cpp",
-              "ViewState": "AgIAAFcAAAAAAAAAAAAAAEUBAAABAAAAAAAAAA==",
+              "ViewState": "AgIAADIBAAAAAAAAAAAAAEUBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-27T04:09:42.324Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Juego.h",
               "DocumentMoniker": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\Juego.h",
               "RelativeDocumentMoniker": "proyecto final\\Juego.h",
               "ToolTip": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\Juego.h",
               "RelativeToolTip": "proyecto final\\Juego.h",
-              "ViewState": "AgIAAKAAAAAAAAAAAAAqwEgBAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAAEgBAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-29T01:08:16.789Z"
+              "WhenOpened": "2025-10-29T01:08:16.789Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -79,15 +80,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "ContenedorJugadores.h",
               "DocumentMoniker": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\ContenedorJugadores.h",
               "RelativeDocumentMoniker": "proyecto final\\ContenedorJugadores.h",
               "ToolTip": "C:\\Users\\gutie\\source\\repos\\Nueva carpeta\\Proyecto-final-de-progra-1\\proyecto final\\proyecto final\\ContenedorJugadores.h",
               "RelativeToolTip": "proyecto final\\ContenedorJugadores.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAADIBAAAAAAAAAAAAAAwAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-29T01:08:15.647Z"
+              "WhenOpened": "2025-10-29T01:08:15.647Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
