@@ -15,7 +15,7 @@ void menuModosJuego() {
         cout << "=============================\n";
         cout << "1. Duelo Clasico (1 vs 1)\n";
         cout << "2. Rondas Multiples (Mejor de X)\n";
-        cout << "3. Modo Practica (Proximamente)\n";
+        cout << "3. Modo Practica\n";
         cout << "4. Torneo (Proximamente)\n";
         cout << "5. Desafio de Velocidad (Proximamente)\n";
         cout << "6. Volver al menu principal\n";
@@ -88,7 +88,46 @@ void menuModosJuego() {
             break;
         }
 
-        case 3:
+        case 3: {
+            // Modo Práctica
+            system("cls");
+            string nombre;
+            int numIntentos;
+
+            cout << "=== MODO PRACTICA ===\n\n";
+            cout << "Este modo te permite entrenar sin afectar tus estadisticas.\n\n";
+            cout << "Ingrese su nombre: ";
+            getline(cin, nombre);
+
+            cout << "\nCuantos intentos deseas realizar?\n";
+            cout << "1. 3 intentos\n";
+            cout << "2. 5 intentos\n";
+            cout << "3. 10 intentos\n";
+            cout << "Opcion: ";
+            cin >> numIntentos;
+            cin.ignore();
+
+            int intentosTotal;
+            switch (numIntentos) {
+            case 1: intentosTotal = 3; break;
+            case 2: intentosTotal = 5; break;
+            case 3: intentosTotal = 10; break;
+            default:
+                cout << "Opcion invalida, usando 5 intentos.\n";
+                intentosTotal = 5;
+                this_thread::sleep_for(chrono::seconds(1));
+            }
+
+            Jugador jugador(nombre, 'a');
+
+            Juego juego(jugador, jugador, 3);
+            juego.modoPractica(jugador, intentosTotal);
+
+            cout << "\nPresione Enter para volver al menu...";
+            cin.ignore();
+            break;
+        }
+
         case 4:
         case 5:
             system("cls");
@@ -138,12 +177,49 @@ void menuPrincipal() {
             break;
         }
 
-        case 2:
-            system("cls");
-            contenedor.cargarDatos();
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+        case 2: {
+            // Submenú de Rankings
+            int opcionRanking = 0;
+            do {
+                system("cls");
+                cout << "=============================\n";
+                cout << "       VER RANKING         \n";
+                cout << "=============================\n";
+                cout << "1. Duelo Clasico\n";
+                cout << "2. Rondas Multiples\n";
+                cout << "3. Ranking General (Todos los modos)\n";
+                cout << "4. Volver al menu principal\n";
+                cout << "=============================\n";
+                cout << "Seleccione una opcion: ";
+                cin >> opcionRanking;
+                cin.ignore();
+
+                system("cls");
+                switch (opcionRanking) {
+                case 1:
+                    contenedor.cargarDatosPorModo("clasico");
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 2:
+                    contenedor.cargarDatosPorModo("rondas");
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 3:
+                    contenedor.cargarDatos();
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 4:
+                    break;
+                default:
+                    cout << "Opcion invalida.\n";
+                    this_thread::sleep_for(chrono::seconds(1));
+                }
+            } while (opcionRanking != 4);
             break;
+        }
 
         case 3: {
             system("cls");

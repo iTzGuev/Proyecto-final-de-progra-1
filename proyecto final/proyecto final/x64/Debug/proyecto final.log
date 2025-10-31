@@ -5,7 +5,13 @@ C:\Users\gutie\source\repos\Nueva carpeta\Proyecto-final-de-progra-1\proyecto fi
 C:\Users\gutie\source\repos\Nueva carpeta\Proyecto-final-de-progra-1\proyecto final\proyecto final\ContenedorJugadores.h(52,24): warning C4267: 'return': conversión de 'size_t' a 'int'; posible pérdida de datos
   (compilando archivo de origen "proyecto%20final.cpp")
   
-C:\Users\gutie\source\repos\Nueva carpeta\Proyecto-final-de-progra-1\proyecto final\proyecto final\ContenedorJugadores.h(139,26): warning C4267: 'inicializando': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\gutie\source\repos\Nueva carpeta\Proyecto-final-de-progra-1\proyecto final\proyecto final\ContenedorJugadores.h(63,24): warning C4267: 'return': conversión de 'size_t' a 'int'; posible pérdida de datos
+  (compilando archivo de origen "proyecto%20final.cpp")
+  
+C:\Users\gutie\source\repos\Nueva carpeta\Proyecto-final-de-progra-1\proyecto final\proyecto final\ContenedorJugadores.h(180,26): warning C4267: 'inicializando': conversión de 'size_t' a 'int'; posible pérdida de datos
+  (compilando archivo de origen "proyecto%20final.cpp")
+  
+C:\Users\gutie\source\repos\Nueva carpeta\Proyecto-final-de-progra-1\proyecto final\proyecto final\ContenedorJugadores.h(246,26): warning C4267: 'inicializando': conversión de 'size_t' a 'int'; posible pérdida de datos
   (compilando archivo de origen "proyecto%20final.cpp")
   
   proyecto final.vcxproj -> C:\Users\gutie\source\repos\Nueva carpeta\Proyecto-final-de-progra-1\proyecto final\x64\Debug\proyecto final.exe
