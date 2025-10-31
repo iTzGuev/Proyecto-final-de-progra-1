@@ -45,7 +45,7 @@ private:
         }
     }
 
-    // Buscar índice de jugador por nombre
+    // Buscar índice de jugador por nombre (sin importar modo)
     int buscarJugador(const string& nombre) {
         for (size_t i = 0; i < datos["jugadores"].size(); i++) {
             if (datos["jugadores"][i]["nombre"] == nombre) {
@@ -66,47 +66,23 @@ private:
         return -1;
     }
 
-    // Actualizar o crear jugador
-    void actualizarJugador(const Jugador& jugador) {
-        int index = buscarJugador(jugador.getNombre());
-
-        if (index == -1) {
-            // Jugador nuevo - crear entrada
-            json nuevoJugador = {
-                {"nombre", jugador.getNombre()},
-                {"victorias", jugador.getVictorias()},
-                {"partidas", jugador.getPartidas()},
-                {"mejor_tiempo", jugador.getTiempoReaccion()},
-                {"tecla", string(1, jugador.getTecla())}
-            };
-            datos["jugadores"].push_back(nuevoJugador);
-        }
-        else {
-            // Jugador existente - actualizar estadísticas
-            datos["jugadores"][index]["victorias"] =
-                datos["jugadores"][index]["victorias"].get<int>() + jugador.getVictorias();
-            datos["jugadores"][index]["partidas"] =
-                datos["jugadores"][index]["partidas"].get<int>() + jugador.getPartidas();
-
-            // Actualizar mejor tiempo si es menor
-            float mejorTiempo = datos["jugadores"][index]["mejor_tiempo"].get<float>();
-            if (jugador.getTiempoReaccion() < mejorTiempo && jugador.getTiempoReaccion() > 0) {
-                datos["jugadores"][index]["mejor_tiempo"] = jugador.getTiempoReaccion();
-            }
-        }
-    }
-
-    // Actualizar o crear jugador con modo específico
+    // Actualizar o crear jugador con modo específico - CORREGIDO TIEMPO EN 0
     void actualizarJugadorConModo(const Jugador& jugador) {
         int index = buscarJugadorPorModo(jugador.getNombre(), jugador.getModoJuego());
 
         if (index == -1) {
             // Jugador nuevo en este modo - crear entrada
+            // CORRECCIÓN: No guardar si el tiempo es 0 (inválido)
+            float tiempoAGuardar = jugador.getTiempoReaccion();
+            if (tiempoAGuardar <= 0) {
+                tiempoAGuardar = 999.9f; // Valor alto por defecto si no tiene tiempo válido
+            }
+
             json nuevoJugador = {
                 {"nombre", jugador.getNombre()},
                 {"victorias", jugador.getVictorias()},
                 {"partidas", jugador.getPartidas()},
-                {"mejor_tiempo", jugador.getTiempoReaccion()},
+                {"mejor_tiempo", tiempoAGuardar},
                 {"tecla", string(1, jugador.getTecla())},
                 {"modo_juego", jugador.getModoJuego()}
             };
@@ -119,10 +95,12 @@ private:
             datos["jugadores"][index]["partidas"] =
                 datos["jugadores"][index]["partidas"].get<int>() + jugador.getPartidas();
 
-            // Actualizar mejor tiempo si es menor
+            // Actualizar mejor tiempo si es menor Y válido (mayor a 0)
             float mejorTiempo = datos["jugadores"][index]["mejor_tiempo"].get<float>();
-            if (jugador.getTiempoReaccion() < mejorTiempo && jugador.getTiempoReaccion() > 0) {
-                datos["jugadores"][index]["mejor_tiempo"] = jugador.getTiempoReaccion();
+            float nuevoTiempo = jugador.getTiempoReaccion();
+
+            if (nuevoTiempo > 0 && nuevoTiempo < mejorTiempo) {
+                datos["jugadores"][index]["mejor_tiempo"] = nuevoTiempo;
             }
         }
     }
@@ -189,7 +167,14 @@ public:
             }
 
             cout << "\n";
-            cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+
+            // CORRECCIÓN: No mostrar tiempos inválidos
+            if (mejorTiempo > 0 && mejorTiempo < 999) {
+                cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+            }
+            else {
+                cout << "   Mejor tiempo: N/A\n";
+            }
             cout << "---------------------------------------------------------------\n";
         }
 
@@ -255,7 +240,14 @@ public:
             }
 
             cout << "\n";
-            cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+
+            // CORRECCIÓN: No mostrar tiempos inválidos
+            if (mejorTiempo > 0 && mejorTiempo < 999) {
+                cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+            }
+            else {
+                cout << "   Mejor tiempo: N/A\n";
+            }
             cout << "---------------------------------------------------------------\n";
         }
 
@@ -310,16 +302,23 @@ public:
     // Eliminar un jugador
     void eliminarJugador(const string& nombre) {
         cargarJSON();
-        int index = buscarJugador(nombre);
 
-        if (index == -1) {
+        // CORRECCIÓN: Eliminar TODAS las entradas de ese jugador (en todos los modos)
+        bool encontrado = false;
+        for (int i = datos["jugadores"].size() - 1; i >= 0; i--) {
+            if (datos["jugadores"][i]["nombre"] == nombre) {
+                datos["jugadores"].erase(datos["jugadores"].begin() + i);
+                encontrado = true;
+            }
+        }
+
+        if (!encontrado) {
             cout << "Jugador '" << nombre << "' no encontrado.\n";
             return;
         }
 
-        datos["jugadores"].erase(datos["jugadores"].begin() + index);
         guardarJSON();
-        cout << "Jugador '" << nombre << "' eliminado del historial.\n";
+        cout << "Jugador '" << nombre << "' eliminado del historial (todos los modos).\n";
     }
 
     // Resetear todas las estadísticas
