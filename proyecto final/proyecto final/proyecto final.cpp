@@ -87,6 +87,7 @@ void menuModosJuego() {
             cin.ignore();
             break;
         }
+
         case 3: {
             // Modo Práctica
             system("cls");
@@ -117,15 +118,16 @@ void menuModosJuego() {
                 this_thread::sleep_for(chrono::seconds(1));
             }
 
-            Jugador jugador(nombre, 'a'); // Tecla 'a' por defecto
+            Jugador jugador(nombre, 'a');
 
-            Juego juego(jugador, jugador, 3); // Se pasa el mismo jugador dos veces (no se usa el segundo)
+            Juego juego(jugador, jugador, 3);
             juego.modoPractica(jugador, intentosTotal);
 
             cout << "\nPresione Enter para volver al menu...";
             cin.ignore();
             break;
         }
+
         case 4:
         case 5:
             system("cls");
@@ -175,12 +177,49 @@ void menuPrincipal() {
             break;
         }
 
-        case 2:
-            system("cls");
-            contenedor.cargarDatos();
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+        case 2: {
+            // Submenú de Rankings
+            int opcionRanking = 0;
+            do {
+                system("cls");
+                cout << "=============================\n";
+                cout << "       VER RANKING         \n";
+                cout << "=============================\n";
+                cout << "1. Duelo Clasico\n";
+                cout << "2. Rondas Multiples\n";
+                cout << "3. Ranking General (Todos los modos)\n";
+                cout << "4. Volver al menu principal\n";
+                cout << "=============================\n";
+                cout << "Seleccione una opcion: ";
+                cin >> opcionRanking;
+                cin.ignore();
+
+                system("cls");
+                switch (opcionRanking) {
+                case 1:
+                    contenedor.cargarDatosPorModo("clasico");
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 2:
+                    contenedor.cargarDatosPorModo("rondas");
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 3:
+                    contenedor.cargarDatos();
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 4:
+                    break;
+                default:
+                    cout << "Opcion invalida.\n";
+                    this_thread::sleep_for(chrono::seconds(1));
+                }
+            } while (opcionRanking != 4);
             break;
+        }
 
         case 3: {
             system("cls");
