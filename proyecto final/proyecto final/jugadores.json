@@ -1,5 +1,14 @@
 {
     "juego": "Duelo de Reflejos",
-    "jugadores": [],
+    "jugadores": [
+        {
+            "mejor_tiempo": 0.2833999991416931,
+            "modo_juego": "rondas",
+            "nombre": "",
+            "partidas": 2,
+            "tecla": "a",
+            "victorias": 1
+        }
+    ],
     "version": "1.0"
 }
