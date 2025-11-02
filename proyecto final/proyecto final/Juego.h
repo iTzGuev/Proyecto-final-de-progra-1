@@ -93,33 +93,39 @@ public:
         : jugador1(j1), jugador2(j2), tiempoCuentaRegresiva(cuenta), enCurso(false) {
     }
 
-    // MODO 1: Duelo Clásico (una sola ronda)
+    // MODO 1: Duelo Clásico (una sola ronda) - CORREGIDO SIN RECURSIVIDAD
     void modoDueloClasico() {
-        enCurso = true;
-        ejecutarRonda();
+        bool quiereJugar = true;
 
-        int ganador = determinarGanadorRonda();
-        finalizarPartida(ganador, "clasico");
+        while (quiereJugar) {
+            enCurso = true;
+            ejecutarRonda();
 
-        // Preguntar si quieren volver a jugar
-        char respuesta;
-        cout << "\n¿Quieren jugar otra vez? (s/n): ";
-        cin >> respuesta;
-        cin.ignore();
+            int ganador = determinarGanadorRonda();
+            finalizarPartida(ganador, "clasico");
 
-        if (respuesta == 's' || respuesta == 'S') {
-            jugador1.registrarTiempo(0);
-            jugador2.registrarTiempo(0);
-            jugador1.setVictorias(0);
-            jugador1.setPartidas(0);
-            jugador2.setVictorias(0);
-            jugador2.setPartidas(0);
-            system("cls");
-            modoDueloClasico();
+            // Preguntar si quieren volver a jugar
+            char respuesta;
+            cout << "\n¿Quieren jugar otra vez? (s/n): ";
+            cin >> respuesta;
+            cin.ignore();
+
+            if (respuesta == 's' || respuesta == 'S') {
+                // Resetear para nueva partida
+                jugador1.registrarTiempo(0);
+                jugador2.registrarTiempo(0);
+                jugador1.setVictorias(0);
+                jugador1.setPartidas(0);
+                jugador2.setVictorias(0);
+                jugador2.setPartidas(0);
+                system("cls");
+            }
+            else {
+                quiereJugar = false;
+            }
         }
-        else {
-            enCurso = false;
-        }
+
+        enCurso = false;
     }
 
     // MODO 2: Rondas Múltiples (mejor de X)
@@ -318,6 +324,119 @@ public:
 
         cout << "========================================\n";
         cout << "\nRecuerda: Este modo NO afecta tu ranking.\n";
+
+        enCurso = false;
+    }
+    // MODO 4: Torneo (eliminación directa)
+    void modoTorneo(vector<string>& nombresJugadores) {
+        if (nombresJugadores.size() < 4 || nombresJugadores.size() > 16) {
+            cout << "Error: El torneo requiere entre 4 y 16 jugadores.\n";
+            return;
+        }
+
+        // Validar que el número sea potencia de 2
+        int numJugadores = nombresJugadores.size();
+        if ((numJugadores & (numJugadores - 1)) != 0) {
+            cout << "Error: El numero de jugadores debe ser 4, 8 o 16.\n";
+            return;
+        }
+
+        enCurso = true;
+        vector<string> jugadoresActuales = nombresJugadores;
+        int ronda = 1;
+
+        // Determinar nombre de la ronda
+        auto obtenerNombreRonda = [](int jugadoresRestantes) -> string {
+            if (jugadoresRestantes == 2) return "FINAL";
+            if (jugadoresRestantes == 4) return "SEMIFINALES";
+            if (jugadoresRestantes == 8) return "CUARTOS DE FINAL";
+            if (jugadoresRestantes == 16) return "OCTAVOS DE FINAL";
+            return "RONDA " + to_string(jugadoresRestantes / 2);
+            };
+
+        // Bucle principal del torneo
+        while (jugadoresActuales.size() > 1) {
+            system("cls");
+            cout << "\n============================================\n";
+            cout << "     " << obtenerNombreRonda(jugadoresActuales.size()) << "\n";
+            cout << "============================================\n";
+            cout << "Jugadores restantes: " << jugadoresActuales.size() << "\n";
+            cout << "============================================\n\n";
+
+            vector<string> ganadores;
+
+            // Enfrentar a los jugadores en pares
+            for (size_t i = 0; i < jugadoresActuales.size(); i += 2) {
+                cout << "\n--- Duelo " << (i / 2 + 1) << " ---\n";
+                cout << jugadoresActuales[i] << " vs " << jugadoresActuales[i + 1] << "\n";
+                cout << "Presiona Enter para comenzar...";
+                cin.ignore();
+
+                // Crear jugadores temporales
+                Jugador j1(jugadoresActuales[i], 'a');
+                Jugador j2(jugadoresActuales[i + 1], 'l');
+
+                // Asignar a los atributos de la clase
+                jugador1 = j1;
+                jugador2 = j2;
+
+                // Ejecutar duelo
+                system("cls");
+                cout << "\n=== " << jugadoresActuales[i] << " vs " << jugadoresActuales[i + 1] << " ===\n";
+                ejecutarRonda();
+
+                // Determinar ganador
+                int ganador = determinarGanadorRonda();
+                string nombreGanador;
+
+                if (ganador == 1) {
+                    nombreGanador = jugadoresActuales[i];
+                    cout << "\n*** " << nombreGanador << " avanza a la siguiente ronda! ***\n";
+                }
+                else if (ganador == 2) {
+                    nombreGanador = jugadoresActuales[i + 1];
+                    cout << "\n*** " << nombreGanador << " avanza a la siguiente ronda! ***\n";
+                }
+                else {
+                    // En caso de empate, elegir al primero (o implementar desempate)
+                    nombreGanador = jugadoresActuales[i];
+                    cout << "\n¡Empate! " << nombreGanador << " avanza por orden.\n";
+                }
+
+                ganadores.push_back(nombreGanador);
+
+                cout << "\nPresiona Enter para continuar...";
+                cin.ignore();
+            }
+
+            jugadoresActuales = ganadores;
+            ronda++;
+        }
+
+        // Anunciar campeón
+        system("cls");
+        cout << "\n";
+        cout << "================================================\n";
+        cout << "                                                \n";
+        cout << "     *** CAMPEON DEL TORNEO ***                \n";
+        cout << "                                                \n";
+        cout << "           " << jugadoresActuales[0] << "           \n";
+        cout << "                                                \n";
+        cout << "================================================\n";
+        cout << "\n¡Felicidades! Has ganado el torneo!\n";
+
+        // Guardar estadísticas del campeón (1 victoria, 1 partida)
+        Jugador campeon(jugadoresActuales[0], 'a');
+        campeon.incrementarVictorias();
+        campeon.incrementarPartidas();
+        campeon.setModoJuego("torneo");
+        campeon.registrarTiempo(0.1f); // Tiempo simbólico
+
+        // Crear jugador dummy para guardar (el método requiere 2 jugadores)
+        Jugador dummy("", 'l');
+        dummy.setModoJuego("torneo");
+
+        contenedor.guardarDatos(campeon, dummy);
 
         enCurso = false;
     }

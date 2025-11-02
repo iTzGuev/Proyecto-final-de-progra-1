@@ -4,6 +4,42 @@
 #include "Juego.h"
 #include "Tempo.h"
 
+// Función para validar entrada numérica
+int leerOpcionSegura(int min, int max) {
+    int opcion;
+    while (true) {
+        if (cin >> opcion) {
+            cin.ignore();
+            if (opcion >= min && opcion <= max) {
+                return opcion;
+            }
+            else {
+                cout << "Opcion fuera de rango. Ingrese entre " << min << " y " << max << ": ";
+            }
+        }
+        else {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Entrada invalida. Ingrese un numero entre " << min << " y " << max << ": ";
+        }
+    }
+}
+
+// Función para validar que los nombres no sean vacíos ni duplicados
+bool validarNombres(string& nombre1, string& nombre2) {
+    if (nombre1.empty() || nombre2.empty()) {
+        cout << "\nError: Los nombres no pueden estar vacios.\n";
+        return false;
+    }
+
+    if (nombre1 == nombre2) {
+        cout << "\nError: Los jugadores deben tener nombres diferentes.\n";
+        return false;
+    }
+
+    return true;
+}
+
 // Función para el submenú de modos de juego
 void menuModosJuego() {
     int opcion = 0;
@@ -21,8 +57,8 @@ void menuModosJuego() {
         cout << "6. Volver al menu principal\n";
         cout << "=============================\n";
         cout << "Seleccione un modo: ";
-        cin >> opcion;
-        cin.ignore();
+
+        opcion = leerOpcionSegura(1, 6);
 
         switch (opcion) {
         case 1: {
@@ -30,10 +66,13 @@ void menuModosJuego() {
             system("cls");
             string nombre1, nombre2;
             cout << "=== DUELO CLASICO ===\n\n";
-            cout << "Ingrese nombre del Jugador 1: ";
-            getline(cin, nombre1);
-            cout << "Ingrese nombre del Jugador 2: ";
-            getline(cin, nombre2);
+
+            do {
+                cout << "Ingrese nombre del Jugador 1: ";
+                getline(cin, nombre1);
+                cout << "Ingrese nombre del Jugador 2: ";
+                getline(cin, nombre2);
+            } while (!validarNombres(nombre1, nombre2));
 
             Jugador j1(nombre1, 'a');
             Jugador j2(nombre2, 'l');
@@ -53,28 +92,28 @@ void menuModosJuego() {
             int numRondas;
 
             cout << "=== RONDAS MULTIPLES ===\n\n";
-            cout << "Ingrese nombre del Jugador 1: ";
-            getline(cin, nombre1);
-            cout << "Ingrese nombre del Jugador 2: ";
-            getline(cin, nombre2);
+
+            do {
+                cout << "Ingrese nombre del Jugador 1: ";
+                getline(cin, nombre1);
+                cout << "Ingrese nombre del Jugador 2: ";
+                getline(cin, nombre2);
+            } while (!validarNombres(nombre1, nombre2));
 
             cout << "\nSeleccione cantidad de rondas:\n";
             cout << "1. Mejor de 3\n";
             cout << "2. Mejor de 5\n";
             cout << "3. Mejor de 7\n";
             cout << "Opcion: ";
-            cin >> numRondas;
-            cin.ignore();
+
+            numRondas = leerOpcionSegura(1, 3);
 
             int rondasTotal;
             switch (numRondas) {
             case 1: rondasTotal = 3; break;
             case 2: rondasTotal = 5; break;
             case 3: rondasTotal = 7; break;
-            default:
-                cout << "Opcion invalida, usando mejor de 3.\n";
-                rondasTotal = 3;
-                this_thread::sleep_for(chrono::seconds(1));
+            default: rondasTotal = 3;
             }
 
             Jugador j1(nombre1, 'a');
@@ -96,26 +135,29 @@ void menuModosJuego() {
 
             cout << "=== MODO PRACTICA ===\n\n";
             cout << "Este modo te permite entrenar sin afectar tus estadisticas.\n\n";
-            cout << "Ingrese su nombre: ";
-            getline(cin, nombre);
+
+            do {
+                cout << "Ingrese su nombre: ";
+                getline(cin, nombre);
+                if (nombre.empty()) {
+                    cout << "El nombre no puede estar vacio.\n";
+                }
+            } while (nombre.empty());
 
             cout << "\nCuantos intentos deseas realizar?\n";
             cout << "1. 3 intentos\n";
             cout << "2. 5 intentos\n";
             cout << "3. 10 intentos\n";
             cout << "Opcion: ";
-            cin >> numIntentos;
-            cin.ignore();
+
+            numIntentos = leerOpcionSegura(1, 3);
 
             int intentosTotal;
             switch (numIntentos) {
             case 1: intentosTotal = 3; break;
             case 2: intentosTotal = 5; break;
             case 3: intentosTotal = 10; break;
-            default:
-                cout << "Opcion invalida, usando 5 intentos.\n";
-                intentosTotal = 5;
-                this_thread::sleep_for(chrono::seconds(1));
+            default: intentosTotal = 5;
             }
 
             Jugador jugador(nombre, 'a');
@@ -128,7 +170,68 @@ void menuModosJuego() {
             break;
         }
 
-        case 4:
+        case 4: {
+            // Modo Torneo
+            system("cls");
+            int numJugadores;
+
+            cout << "=== MODO TORNEO ===\n\n";
+            cout << "Sistema de eliminacion directa\n\n";
+            cout << "Seleccione cantidad de jugadores:\n";
+            cout << "1. 4 jugadores\n";
+            cout << "2. 8 jugadores\n";
+            cout << "3. 16 jugadores\n";
+            cout << "Opcion: ";
+
+            numJugadores = leerOpcionSegura(1, 3);
+
+            int cantidadJugadores;
+            switch (numJugadores) {
+            case 1: cantidadJugadores = 4; break;
+            case 2: cantidadJugadores = 8; break;
+            case 3: cantidadJugadores = 16; break;
+            default: cantidadJugadores = 4;
+            }
+
+            vector<string> nombresJugadores;
+            set<string> nombresUnicos; // Para verificar duplicados
+
+            cout << "\n--- Ingrese los nombres de los jugadores ---\n";
+            for (int i = 1; i <= cantidadJugadores; i++) {
+                string nombre;
+                bool nombreValido = false;
+
+                while (!nombreValido) {
+                    cout << "Jugador " << i << ": ";
+                    getline(cin, nombre);
+
+                    if (nombre.empty()) {
+                        cout << "El nombre no puede estar vacio.\n";
+                    }
+                    else if (nombresUnicos.find(nombre) != nombresUnicos.end()) {
+                        cout << "Ese nombre ya fue usado. Ingrese otro.\n";
+                    }
+                    else {
+                        nombreValido = true;
+                        nombresJugadores.push_back(nombre);
+                        nombresUnicos.insert(nombre);
+                    }
+                }
+            }
+
+            cout << "\n¡Torneo configurado! Presiona Enter para comenzar...";
+            cin.ignore();
+
+            Jugador temp1("temp1", 'a');
+            Jugador temp2("temp2", 'l');
+            Juego juego(temp1, temp2, 3);
+            juego.modoTorneo(nombresJugadores);
+
+            cout << "\nPresione Enter para volver al menu...";
+            cin.ignore();
+            break;
+        }
+
         case 5:
             system("cls");
             cout << "\n=== PROXIMAMENTE ===\n";
@@ -167,8 +270,8 @@ void menuPrincipal() {
         cout << "6. Salir\n";
         cout << "=============================\n";
         cout << "Seleccione una opcion: ";
-        cin >> opcion;
-        cin.ignore();
+
+        opcion = leerOpcionSegura(1, 6);
 
         switch (opcion) {
         case 1: {
@@ -187,12 +290,12 @@ void menuPrincipal() {
                 cout << "=============================\n";
                 cout << "1. Duelo Clasico\n";
                 cout << "2. Rondas Multiples\n";
-                cout << "3. Ranking General (Todos los modos)\n";
-                cout << "4. Volver al menu principal\n";
+                cout << "3. Torneos\n";              // AGREGAR
+                cout << "4. Ranking General (Todos los modos)\n";  // CAMBIAR de 3 a 4
+                cout << "5. Volver al menu principal\n";           // CAMBIAR de 4 a 5
                 cout << "=============================\n";
                 cout << "Seleccione una opcion: ";
-                cin >> opcionRanking;
-                cin.ignore();
+                opcionRanking = leerOpcionSegura(1, 5);  // CAMBIAR de 4 a 5
 
                 system("cls");
                 switch (opcionRanking) {
@@ -207,17 +310,22 @@ void menuPrincipal() {
                     cin.ignore();
                     break;
                 case 3:
+                    contenedor.cargarDatosPorModo("torneo");  // NUEVO
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 4:  // CAMBIAR de 3 a 4
                     contenedor.cargarDatos();
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 4:
+                case 5:  // CAMBIAR de 4 a 5
                     break;
                 default:
                     cout << "Opcion invalida.\n";
                     this_thread::sleep_for(chrono::seconds(1));
                 }
-            } while (opcionRanking != 4);
+            } while (opcionRanking != 5);  // CAMBIAR de 4 a 5
             break;
         }
 
@@ -234,27 +342,29 @@ void menuPrincipal() {
             cout << "2. Partidas\n";
             cout << "3. Mejor tiempo\n";
             cout << "Opcion: ";
-            cin >> subOpcion;
-            cin.ignore();
+
+            subOpcion = leerOpcionSegura(1, 3);
 
             if (subOpcion == 1) {
                 int victorias;
                 cout << "Nuevas victorias: ";
-                cin >> victorias;
-                cin.ignore();
+                victorias = leerOpcionSegura(0, 9999);
                 contenedor.modificarVictorias(nombre, victorias);
             }
             else if (subOpcion == 2) {
                 int partidas;
                 cout << "Nuevas partidas: ";
-                cin >> partidas;
-                cin.ignore();
+                partidas = leerOpcionSegura(0, 9999);
                 contenedor.modificarPartidas(nombre, partidas);
             }
             else if (subOpcion == 3) {
                 float tiempo;
                 cout << "Nuevo mejor tiempo: ";
-                cin >> tiempo;
+                while (!(cin >> tiempo) || tiempo < 0) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Ingrese un tiempo valido (mayor o igual a 0): ";
+                }
                 cin.ignore();
                 contenedor.modificarMejorTiempo(nombre, tiempo);
             }
