@@ -197,6 +197,7 @@ public:
             cout << "\n=== RANKING: ";
             if (modo == "clasico") cout << "DUELO CLASICO";
             else if (modo == "rondas") cout << "RONDAS MULTIPLES";
+            else if (modo == "torneo") cout << "TORNEOS";  // AGREGAR ESTA LÍNEA
             cout << " ===\n";
             cout << "No hay jugadores registrados en este modo aun.\n";
             return;
@@ -206,8 +207,9 @@ public:
         cout << "              ** RANKING: ";
         if (modo == "clasico") cout << "DUELO CLASICO";
         else if (modo == "rondas") cout << "RONDAS MULTIPLES";
+        else if (modo == "torneo") cout << "TORNEOS";  // AGREGAR ESTA LÍNEA
         cout << " **                    \n";
-        cout << "===============================================================\n";
+		cout << "===============================================================\n";
 
         // Ordenar por victorias (de mayor a menor)
         for (size_t i = 0; i < jugadoresFiltrados.size(); i++) {

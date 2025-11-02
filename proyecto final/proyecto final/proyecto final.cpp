@@ -170,7 +170,68 @@ void menuModosJuego() {
             break;
         }
 
-        case 4:
+        case 4: {
+            // Modo Torneo
+            system("cls");
+            int numJugadores;
+
+            cout << "=== MODO TORNEO ===\n\n";
+            cout << "Sistema de eliminacion directa\n\n";
+            cout << "Seleccione cantidad de jugadores:\n";
+            cout << "1. 4 jugadores\n";
+            cout << "2. 8 jugadores\n";
+            cout << "3. 16 jugadores\n";
+            cout << "Opcion: ";
+
+            numJugadores = leerOpcionSegura(1, 3);
+
+            int cantidadJugadores;
+            switch (numJugadores) {
+            case 1: cantidadJugadores = 4; break;
+            case 2: cantidadJugadores = 8; break;
+            case 3: cantidadJugadores = 16; break;
+            default: cantidadJugadores = 4;
+            }
+
+            vector<string> nombresJugadores;
+            set<string> nombresUnicos; // Para verificar duplicados
+
+            cout << "\n--- Ingrese los nombres de los jugadores ---\n";
+            for (int i = 1; i <= cantidadJugadores; i++) {
+                string nombre;
+                bool nombreValido = false;
+
+                while (!nombreValido) {
+                    cout << "Jugador " << i << ": ";
+                    getline(cin, nombre);
+
+                    if (nombre.empty()) {
+                        cout << "El nombre no puede estar vacio.\n";
+                    }
+                    else if (nombresUnicos.find(nombre) != nombresUnicos.end()) {
+                        cout << "Ese nombre ya fue usado. Ingrese otro.\n";
+                    }
+                    else {
+                        nombreValido = true;
+                        nombresJugadores.push_back(nombre);
+                        nombresUnicos.insert(nombre);
+                    }
+                }
+            }
+
+            cout << "\n¡Torneo configurado! Presiona Enter para comenzar...";
+            cin.ignore();
+
+            Jugador temp1("temp1", 'a');
+            Jugador temp2("temp2", 'l');
+            Juego juego(temp1, temp2, 3);
+            juego.modoTorneo(nombresJugadores);
+
+            cout << "\nPresione Enter para volver al menu...";
+            cin.ignore();
+            break;
+        }
+
         case 5:
             system("cls");
             cout << "\n=== PROXIMAMENTE ===\n";
@@ -229,12 +290,12 @@ void menuPrincipal() {
                 cout << "=============================\n";
                 cout << "1. Duelo Clasico\n";
                 cout << "2. Rondas Multiples\n";
-                cout << "3. Ranking General (Todos los modos)\n";
-                cout << "4. Volver al menu principal\n";
+                cout << "3. Torneos\n";              // AGREGAR
+                cout << "4. Ranking General (Todos los modos)\n";  // CAMBIAR de 3 a 4
+                cout << "5. Volver al menu principal\n";           // CAMBIAR de 4 a 5
                 cout << "=============================\n";
                 cout << "Seleccione una opcion: ";
-
-                opcionRanking = leerOpcionSegura(1, 4);
+                opcionRanking = leerOpcionSegura(1, 5);  // CAMBIAR de 4 a 5
 
                 system("cls");
                 switch (opcionRanking) {
@@ -249,17 +310,22 @@ void menuPrincipal() {
                     cin.ignore();
                     break;
                 case 3:
+                    contenedor.cargarDatosPorModo("torneo");  // NUEVO
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 4:  // CAMBIAR de 3 a 4
                     contenedor.cargarDatos();
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 4:
+                case 5:  // CAMBIAR de 4 a 5
                     break;
                 default:
                     cout << "Opcion invalida.\n";
                     this_thread::sleep_for(chrono::seconds(1));
                 }
-            } while (opcionRanking != 4);
+            } while (opcionRanking != 5);  // CAMBIAR de 4 a 5
             break;
         }
 
