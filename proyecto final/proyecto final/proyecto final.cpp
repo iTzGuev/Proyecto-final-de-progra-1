@@ -52,7 +52,7 @@ void menuModosJuego() {
         cout << "1. Duelo Clasico (1 vs 1)\n";
         cout << "2. Rondas Multiples (Mejor de X)\n";
         cout << "3. Modo Practica\n";
-        cout << "4. Torneo (Proximamente)\n";
+        cout << "4. Torneo\n";
         cout << "5. Desafio de Velocidad (Proximamente)\n";
         cout << "6. Volver al menu principal\n";
         cout << "=============================\n";
