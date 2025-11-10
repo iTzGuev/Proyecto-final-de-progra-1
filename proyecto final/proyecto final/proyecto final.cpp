@@ -4,7 +4,7 @@
 #include "Juego.h"
 #include "Tempo.h"
 
-// Función para validar entrada numérica
+// FunciÃ³n para validar entrada numÃ©rica
 int leerOpcionSegura(int min, int max) {
     int opcion;
     while (true) {
@@ -25,7 +25,7 @@ int leerOpcionSegura(int min, int max) {
     }
 }
 
-// Función para validar que los nombres no sean vacíos ni duplicados
+// FunciÃ³n para validar que los nombres no sean vacÃ­os ni duplicados
 bool validarNombres(string& nombre1, string& nombre2) {
     if (nombre1.empty() || nombre2.empty()) {
         cout << "\nError: Los nombres no pueden estar vacios.\n";
@@ -40,7 +40,7 @@ bool validarNombres(string& nombre1, string& nombre2) {
     return true;
 }
 
-// Función para el submenú de modos de juego
+// FunciÃ³n para el submenÃº de modos de juego
 void menuModosJuego() {
     int opcion = 0;
 
@@ -62,7 +62,7 @@ void menuModosJuego() {
 
         switch (opcion) {
         case 1: {
-            // Duelo Clásico 1v1
+            // Duelo ClÃ¡sico 1v1
             system("cls");
             string nombre1, nombre2;
             cout << "=== DUELO CLASICO ===\n\n";
@@ -86,7 +86,7 @@ void menuModosJuego() {
         }
 
         case 2: {
-            // Rondas Múltiples
+            // Rondas MÃºltiples
             system("cls");
             string nombre1, nombre2;
             int numRondas;
@@ -128,7 +128,7 @@ void menuModosJuego() {
         }
 
         case 3: {
-            // Modo Práctica
+            // Modo PrÃ¡ctica
             system("cls");
             string nombre;
             int numIntentos;
@@ -219,7 +219,7 @@ void menuModosJuego() {
                 }
             }
 
-            cout << "\n¡Torneo configurado! Presiona Enter para comenzar...";
+            cout << "\nÂ¡Torneo configurado! Presiona Enter para comenzar...";
             cin.ignore();
 
             Jugador temp1("temp1", 'a');
@@ -233,7 +233,7 @@ void menuModosJuego() {
         }
 
         case 5: {
-            // Desafío de Velocidad
+            // DesafÃ­o de Velocidad
             system("cls");
             string nombre;
             int numRondas;
@@ -277,7 +277,7 @@ void menuModosJuego() {
         }
 
         case 6:
-            // Volver al menú principal
+            // Volver al menÃº principal
             break;
 
         default:
@@ -288,7 +288,7 @@ void menuModosJuego() {
     } while (opcion != 6);
 }
 
-// Función del menú principal
+// FunciÃ³n del menÃº principal
 void menuPrincipal() {
     ContenedorJugadores contenedor("jugadores.json");
     int opcion = 0;
@@ -311,13 +311,13 @@ void menuPrincipal() {
 
         switch (opcion) {
         case 1: {
-            // Llamar al submenú de modos de juego
+            // Llamar al submenÃº de modos de juego
             menuModosJuego();
             break;
         }
 
         case 2: {
-            // Submenú de Rankings
+            // SubmenÃº de Rankings
             int opcionRanking = 0;
             do {
                 system("cls");
@@ -472,7 +472,7 @@ void menuPrincipal() {
     } while (opcion != 6);
 }
 
-// Función principal
+// FunciÃ³n principal
 int main() {
     srand(time(0));  // Inicializar generador aleatorio para modo velocidad
     menuPrincipal();
