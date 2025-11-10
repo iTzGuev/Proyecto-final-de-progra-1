@@ -72,7 +72,6 @@ private:
 
         if (index == -1) {
             // Jugador nuevo en este modo - crear entrada
-            // CORRECCIÓN: No guardar si el tiempo es 0 (inválido)
             float tiempoAGuardar = jugador.getTiempoReaccion();
             if (tiempoAGuardar <= 0) {
                 tiempoAGuardar = 999.9f; // Valor alto por defecto si no tiene tiempo válido
@@ -197,7 +196,8 @@ public:
             cout << "\n=== RANKING: ";
             if (modo == "clasico") cout << "DUELO CLASICO";
             else if (modo == "rondas") cout << "RONDAS MULTIPLES";
-            else if (modo == "torneo") cout << "TORNEOS";  // AGREGAR ESTA LÍNEA
+            else if (modo == "torneo") cout << "TORNEOS";
+            else if (modo == "velocidad") cout << "DESAFIO DE VELOCIDAD";
             cout << " ===\n";
             cout << "No hay jugadores registrados en este modo aun.\n";
             return;
@@ -207,9 +207,10 @@ public:
         cout << "              ** RANKING: ";
         if (modo == "clasico") cout << "DUELO CLASICO";
         else if (modo == "rondas") cout << "RONDAS MULTIPLES";
-        else if (modo == "torneo") cout << "TORNEOS";  // AGREGAR ESTA LÍNEA
+        else if (modo == "torneo") cout << "TORNEOS";
+        else if (modo == "velocidad") cout << "DESAFIO DE VELOCIDAD";
         cout << " **                    \n";
-		cout << "===============================================================\n";
+        cout << "===============================================================\n";
 
         // Ordenar por victorias (de mayor a menor)
         for (size_t i = 0; i < jugadoresFiltrados.size(); i++) {
@@ -233,12 +234,19 @@ public:
             int espacios = 25 - nombre.length() - to_string(i + 1).length();
             for (int k = 0; k < espacios; k++) cout << " ";
 
-            cout << "| Victorias: " << victorias
-                << " | Partidas: " << partidas;
+            // Mostrar diferente según el modo
+            if (modo == "velocidad") {
+                cout << "| Puntuacion: " << victorias;
+                cout << " | Rondas: " << partidas;
+            }
+            else {
+                cout << "| Victorias: " << victorias
+                    << " | Partidas: " << partidas;
 
-            if (partidas > 0) {
-                double porcentaje = (victorias * 100.0) / partidas;
-                cout << " | Win%: " << fixed << setprecision(1) << porcentaje << "%";
+                if (partidas > 0) {
+                    double porcentaje = (victorias * 100.0) / partidas;
+                    cout << " | Win%: " << fixed << setprecision(1) << porcentaje << "%";
+                }
             }
 
             cout << "\n";

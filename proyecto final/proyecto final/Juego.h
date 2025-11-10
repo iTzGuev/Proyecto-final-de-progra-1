@@ -327,6 +327,7 @@ public:
 
         enCurso = false;
     }
+
     // MODO 4: Torneo (eliminación directa)
     void modoTorneo(vector<string>& nombresJugadores) {
         if (nombresJugadores.size() < 4 || nombresJugadores.size() > 16) {
@@ -398,7 +399,7 @@ public:
                     cout << "\n*** " << nombreGanador << " avanza a la siguiente ronda! ***\n";
                 }
                 else {
-                    // En caso de empate, elegir al primero (o implementar desempate)
+                    // En caso de empate, elegir al primero
                     nombreGanador = jugadoresActuales[i];
                     cout << "\n¡Empate! " << nombreGanador << " avanza por orden.\n";
                 }
@@ -425,18 +426,203 @@ public:
         cout << "================================================\n";
         cout << "\n¡Felicidades! Has ganado el torneo!\n";
 
-        // Guardar estadísticas del campeón (1 victoria, 1 partida)
+        // Guardar estadísticas del campeón
         Jugador campeon(jugadoresActuales[0], 'a');
         campeon.incrementarVictorias();
         campeon.incrementarPartidas();
         campeon.setModoJuego("torneo");
-        campeon.registrarTiempo(0.1f); // Tiempo simbólico
+        campeon.registrarTiempo(0.1f);
 
-        // Crear jugador dummy para guardar (el método requiere 2 jugadores)
         Jugador dummy("", 'l');
         dummy.setModoJuego("torneo");
 
         contenedor.guardarDatos(campeon, dummy);
+
+        enCurso = false;
+    }
+
+    // MODO 5: Desafío de Velocidad (rondas rápidas con dificultad progresiva)
+    void modoDesafioVelocidad(Jugador& jugador, int numeroRondas = 10) {
+        enCurso = true;
+        float tiempoEspera = 3.0f;
+        int puntosTotales = 0;
+        int rondasCompletadas = 0;
+        int errores = 0;
+        float mejorTiempo = 0;
+
+        cout << "\n============================================\n";
+        cout << "      DESAFIO DE VELOCIDAD\n";
+        cout << "============================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "Rondas: " << numeroRondas << "\n";
+        cout << "Tecla: [" << jugador.getTecla() << "]\n";
+        cout << "============================================\n";
+        cout << "\nReglas:\n";
+        cout << "- Reacciona lo mas rapido posible\n";
+        cout << "- La dificultad aumenta cada ronda\n";
+        cout << "- Mas rapido = Mas puntos\n";
+        cout << "- Los errores restan puntos\n";
+        cout << "\nPresiona Enter para comenzar...";
+        cin.ignore();
+
+        // Sistema de rondas progresivas
+        for (int ronda = 1; ronda <= numeroRondas; ronda++) {
+            system("cls");
+            cout << "\n============================================\n";
+            cout << "    RONDA " << ronda << " DE " << numeroRondas << "\n";
+            cout << "============================================\n";
+            cout << "Puntos actuales: " << puntosTotales << "\n";
+            cout << "Errores: " << errores << "\n";
+            if (mejorTiempo > 0) {
+                cout << "Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+            }
+            cout << "============================================\n\n";
+
+            cout << "Preparate...\n";
+
+            // Espera aleatoria para evitar anticipación
+            int esperaAleatoria = (rand() % 2000) + 1000; // Entre 1-3 segundos
+            this_thread::sleep_for(chrono::milliseconds(esperaAleatoria));
+
+            cout << "\n¡AHORA!\n";
+
+            temporizador.iniciar();
+            bool teclaPresionada = false;
+            bool teclaCorrecta = false;
+            float tiempoReaccion = 0;
+
+            // Esperar respuesta (máximo 2 segundos)
+            auto tiempoLimite = high_resolution_clock::now() + chrono::seconds(2);
+
+            while (!teclaPresionada && high_resolution_clock::now() < tiempoLimite) {
+                if (_kbhit()) {
+                    char tecla = _getch();
+                    temporizador.detener();
+                    tiempoReaccion = temporizador.obtenerDiferencia();
+                    teclaPresionada = true;
+
+                    if (tecla == jugador.getTecla()) {
+                        teclaCorrecta = true;
+                    }
+                }
+            }
+
+            // Calcular puntos
+            int puntosRonda = 0;
+
+            if (!teclaPresionada) {
+                cout << "\n¡Muy lento! No respondiste a tiempo.\n";
+                puntosRonda = -50;
+                errores++;
+            }
+            else if (!teclaCorrecta) {
+                cout << "\n¡Tecla incorrecta!\n";
+                puntosRonda = -30;
+                errores++;
+            }
+            else {
+                rondasCompletadas++;
+                cout << "\nTiempo: " << fixed << setprecision(4) << tiempoReaccion << "s\n";
+
+                // Actualizar mejor tiempo
+                if (mejorTiempo == 0 || tiempoReaccion < mejorTiempo) {
+                    mejorTiempo = tiempoReaccion;
+                }
+
+                // Sistema de puntuación basado en velocidad
+                if (tiempoReaccion < 0.15) {
+                    puntosRonda = 200;
+                    cout << "¡INCREIBLE! +200 puntos\n";
+                }
+                else if (tiempoReaccion < 0.20) {
+                    puntosRonda = 150;
+                    cout << "¡EXCELENTE! +150 puntos\n";
+                }
+                else if (tiempoReaccion < 0.30) {
+                    puntosRonda = 100;
+                    cout << "¡MUY BIEN! +100 puntos\n";
+                }
+                else if (tiempoReaccion < 0.40) {
+                    puntosRonda = 75;
+                    cout << "¡BIEN! +75 puntos\n";
+                }
+                else if (tiempoReaccion < 0.50) {
+                    puntosRonda = 50;
+                    cout << "¡ACEPTABLE! +50 puntos\n";
+                }
+                else {
+                    puntosRonda = 25;
+                    cout << "¡LENTO! +25 puntos\n";
+                }
+
+                // Bonus por racha perfecta
+                if (errores == 0 && ronda >= 5) {
+                    int bonus = 50;
+                    puntosRonda += bonus;
+                    cout << "¡RACHA PERFECTA! +" << bonus << " puntos bonus\n";
+                }
+            }
+
+            puntosTotales += puntosRonda;
+            if (puntosRonda > 0) {
+                cout << "\n++" << puntosRonda << " puntos\n";
+            }
+            else {
+                cout << "\n" << puntosRonda << " puntos\n";
+            }
+
+            cout << "Total: " << puntosTotales << " puntos\n";
+
+            // Reducir tiempo entre rondas para aumentar dificultad
+            tiempoEspera = max(0.5f, tiempoEspera - 0.1f);
+
+            if (ronda < numeroRondas) {
+                cout << "\nPresiona Enter para la siguiente ronda...";
+                cin.ignore();
+            }
+        }
+
+        // Resumen final
+        system("cls");
+        cout << "\n================================================\n";
+        cout << "      DESAFIO DE VELOCIDAD COMPLETADO\n";
+        cout << "================================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "------------------------------------------------\n";
+        cout << "Rondas completadas: " << rondasCompletadas << "/" << numeroRondas << "\n";
+        cout << "Errores: " << errores << "\n";
+        cout << "Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+        cout << "------------------------------------------------\n";
+        cout << "PUNTUACION FINAL: " << puntosTotales << " puntos\n";
+        cout << "================================================\n\n";
+
+        // Clasificación final
+        if (puntosTotales >= 1500) {
+            cout << "¡MAESTRO DE LA VELOCIDAD! Eres increible!\n";
+        }
+        else if (puntosTotales >= 1000) {
+            cout << "¡EXPERTO! Excelentes reflejos!\n";
+        }
+        else if (puntosTotales >= 700) {
+            cout << "¡COMPETENTE! Buen desempeno!\n";
+        }
+        else if (puntosTotales >= 400) {
+            cout << "¡PRINCIPIANTE! Sigue practicando!\n";
+        }
+        else {
+            cout << "¡NOVATO! Necesitas mas entrenamiento!\n";
+        }
+
+        // Guardar estadísticas (puntos como "victorias", rondas como "partidas")
+        jugador.setVictorias(puntosTotales);
+        jugador.setPartidas(numeroRondas);
+        jugador.registrarTiempo(mejorTiempo);
+        jugador.setModoJuego("velocidad");
+
+        Jugador dummy("", 'l');
+        dummy.setModoJuego("velocidad");
+
+        contenedor.guardarDatos(jugador, dummy);
 
         enCurso = false;
     }

@@ -1,5 +1,38 @@
 {
     "juego": "Duelo de Reflejos",
-    "jugadores": [],
+    "jugadores": [
+        {
+            "mejor_tiempo": 0.10000000149011612,
+            "modo_juego": "torneo",
+            "nombre": "1",
+            "partidas": 1,
+            "tecla": "a",
+            "victorias": 1
+        },
+        {
+            "mejor_tiempo": 999.9000244140625,
+            "modo_juego": "torneo",
+            "nombre": "",
+            "partidas": 0,
+            "tecla": "l",
+            "victorias": 0
+        },
+        {
+            "mejor_tiempo": 0.2842642068862915,
+            "modo_juego": "velocidad",
+            "nombre": "Ariel",
+            "partidas": 5,
+            "tecla": "a",
+            "victorias": 350
+        },
+        {
+            "mejor_tiempo": 999.9000244140625,
+            "modo_juego": "velocidad",
+            "nombre": "",
+            "partidas": 0,
+            "tecla": "l",
+            "victorias": 0
+        }
+    ],
     "version": "1.0"
 }

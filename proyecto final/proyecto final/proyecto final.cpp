@@ -4,7 +4,7 @@
 #include "Juego.h"
 #include "Tempo.h"
 
-// Función para validar entrada numérica
+// FunciÃ³n para validar entrada numÃ©rica
 int leerOpcionSegura(int min, int max) {
     int opcion;
     while (true) {
@@ -25,7 +25,7 @@ int leerOpcionSegura(int min, int max) {
     }
 }
 
-// Función para validar que los nombres no sean vacíos ni duplicados
+// FunciÃ³n para validar que los nombres no sean vacÃ­os ni duplicados
 bool validarNombres(string& nombre1, string& nombre2) {
     if (nombre1.empty() || nombre2.empty()) {
         cout << "\nError: Los nombres no pueden estar vacios.\n";
@@ -40,7 +40,7 @@ bool validarNombres(string& nombre1, string& nombre2) {
     return true;
 }
 
-// Función para el submenú de modos de juego
+// FunciÃ³n para el submenÃº de modos de juego
 void menuModosJuego() {
     int opcion = 0;
 
@@ -53,7 +53,7 @@ void menuModosJuego() {
         cout << "2. Rondas Multiples (Mejor de X)\n";
         cout << "3. Modo Practica\n";
         cout << "4. Torneo\n";
-        cout << "5. Desafio de Velocidad (Proximamente)\n";
+        cout << "5. Desafio de Velocidad\n";
         cout << "6. Volver al menu principal\n";
         cout << "=============================\n";
         cout << "Seleccione un modo: ";
@@ -62,7 +62,7 @@ void menuModosJuego() {
 
         switch (opcion) {
         case 1: {
-            // Duelo Clásico 1v1
+            // Duelo ClÃ¡sico 1v1
             system("cls");
             string nombre1, nombre2;
             cout << "=== DUELO CLASICO ===\n\n";
@@ -86,7 +86,7 @@ void menuModosJuego() {
         }
 
         case 2: {
-            // Rondas Múltiples
+            // Rondas MÃºltiples
             system("cls");
             string nombre1, nombre2;
             int numRondas;
@@ -128,7 +128,7 @@ void menuModosJuego() {
         }
 
         case 3: {
-            // Modo Práctica
+            // Modo PrÃ¡ctica
             system("cls");
             string nombre;
             int numIntentos;
@@ -194,7 +194,7 @@ void menuModosJuego() {
             }
 
             vector<string> nombresJugadores;
-            set<string> nombresUnicos; // Para verificar duplicados
+            set<string> nombresUnicos;
 
             cout << "\n--- Ingrese los nombres de los jugadores ---\n";
             for (int i = 1; i <= cantidadJugadores; i++) {
@@ -219,7 +219,7 @@ void menuModosJuego() {
                 }
             }
 
-            cout << "\n¡Torneo configurado! Presiona Enter para comenzar...";
+            cout << "\nÂ¡Torneo configurado! Presiona Enter para comenzar...";
             cin.ignore();
 
             Jugador temp1("temp1", 'a');
@@ -232,16 +232,52 @@ void menuModosJuego() {
             break;
         }
 
-        case 5:
+        case 5: {
+            // DesafÃ­o de Velocidad
             system("cls");
-            cout << "\n=== PROXIMAMENTE ===\n";
-            cout << "Este modo de juego estara disponible pronto.\n";
-            cout << "\nPresione Enter para volver...";
+            string nombre;
+            int numRondas;
+
+            cout << "=== DESAFIO DE VELOCIDAD ===\n\n";
+            cout << "Pon a prueba tus reflejos en multiples rondas rapidas!\n";
+            cout << "La dificultad aumenta progresivamente.\n\n";
+
+            do {
+                cout << "Ingrese su nombre: ";
+                getline(cin, nombre);
+                if (nombre.empty()) {
+                    cout << "El nombre no puede estar vacio.\n";
+                }
+            } while (nombre.empty());
+
+            cout << "\nSeleccione cantidad de rondas:\n";
+            cout << "1. 5 rondas (Rapido)\n";
+            cout << "2. 10 rondas (Normal)\n";
+            cout << "3. 15 rondas (Extremo)\n";
+            cout << "Opcion: ";
+
+            numRondas = leerOpcionSegura(1, 3);
+
+            int rondasTotal;
+            switch (numRondas) {
+            case 1: rondasTotal = 5; break;
+            case 2: rondasTotal = 10; break;
+            case 3: rondasTotal = 15; break;
+            default: rondasTotal = 10;
+            }
+
+            Jugador jugador(nombre, 'a');
+
+            Juego juego(jugador, jugador, 3);
+            juego.modoDesafioVelocidad(jugador, rondasTotal);
+
+            cout << "\nPresione Enter para volver al menu...";
             cin.ignore();
             break;
+        }
 
         case 6:
-            // Volver al menú principal
+            // Volver al menÃº principal
             break;
 
         default:
@@ -252,7 +288,7 @@ void menuModosJuego() {
     } while (opcion != 6);
 }
 
-// Función del menú principal
+// FunciÃ³n del menÃº principal
 void menuPrincipal() {
     ContenedorJugadores contenedor("jugadores.json");
     int opcion = 0;
@@ -275,13 +311,13 @@ void menuPrincipal() {
 
         switch (opcion) {
         case 1: {
-            // Llamar al submenú de modos de juego
+            // Llamar al submenÃº de modos de juego
             menuModosJuego();
             break;
         }
 
         case 2: {
-            // Submenú de Rankings
+            // SubmenÃº de Rankings
             int opcionRanking = 0;
             do {
                 system("cls");
@@ -290,12 +326,14 @@ void menuPrincipal() {
                 cout << "=============================\n";
                 cout << "1. Duelo Clasico\n";
                 cout << "2. Rondas Multiples\n";
-                cout << "3. Torneos\n";              // AGREGAR
-                cout << "4. Ranking General (Todos los modos)\n";  // CAMBIAR de 3 a 4
-                cout << "5. Volver al menu principal\n";           // CAMBIAR de 4 a 5
+                cout << "3. Torneos\n";
+                cout << "4. Desafio de Velocidad\n";
+                cout << "5. Ranking General (Todos los modos)\n";
+                cout << "6. Volver al menu principal\n";
                 cout << "=============================\n";
                 cout << "Seleccione una opcion: ";
-                opcionRanking = leerOpcionSegura(1, 5);  // CAMBIAR de 4 a 5
+
+                opcionRanking = leerOpcionSegura(1, 6);
 
                 system("cls");
                 switch (opcionRanking) {
@@ -310,22 +348,27 @@ void menuPrincipal() {
                     cin.ignore();
                     break;
                 case 3:
-                    contenedor.cargarDatosPorModo("torneo");  // NUEVO
+                    contenedor.cargarDatosPorModo("torneo");
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 4:  // CAMBIAR de 3 a 4
+                case 4:
+                    contenedor.cargarDatosPorModo("velocidad");
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 5:
                     contenedor.cargarDatos();
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 5:  // CAMBIAR de 4 a 5
+                case 6:
                     break;
                 default:
                     cout << "Opcion invalida.\n";
                     this_thread::sleep_for(chrono::seconds(1));
                 }
-            } while (opcionRanking != 5);  // CAMBIAR de 4 a 5
+            } while (opcionRanking != 6);
             break;
         }
 
@@ -429,8 +472,9 @@ void menuPrincipal() {
     } while (opcion != 6);
 }
 
-// Función principal
+// FunciÃ³n principal
 int main() {
+    srand(time(0));  // Inicializar generador aleatorio para modo velocidad
     menuPrincipal();
     return 0;
 }
