@@ -52,8 +52,8 @@ void menuModosJuego() {
         cout << "1. Duelo Clasico (1 vs 1)\n";
         cout << "2. Rondas Multiples (Mejor de X)\n";
         cout << "3. Modo Practica\n";
-        cout << "4. Torneo (Proximamente)\n";
-        cout << "5. Desafio de Velocidad (Proximamente)\n";
+        cout << "4. Torneo\n";
+        cout << "5. Desafio de Velocidad\n";
         cout << "6. Volver al menu principal\n";
         cout << "=============================\n";
         cout << "Seleccione un modo: ";
@@ -194,7 +194,7 @@ void menuModosJuego() {
             }
 
             vector<string> nombresJugadores;
-            set<string> nombresUnicos; // Para verificar duplicados
+            set<string> nombresUnicos;
 
             cout << "\n--- Ingrese los nombres de los jugadores ---\n";
             for (int i = 1; i <= cantidadJugadores; i++) {
@@ -232,13 +232,49 @@ void menuModosJuego() {
             break;
         }
 
-        case 5:
+        case 5: {
+            // Desafío de Velocidad
             system("cls");
-            cout << "\n=== PROXIMAMENTE ===\n";
-            cout << "Este modo de juego estara disponible pronto.\n";
-            cout << "\nPresione Enter para volver...";
+            string nombre;
+            int numRondas;
+
+            cout << "=== DESAFIO DE VELOCIDAD ===\n\n";
+            cout << "Pon a prueba tus reflejos en multiples rondas rapidas!\n";
+            cout << "La dificultad aumenta progresivamente.\n\n";
+
+            do {
+                cout << "Ingrese su nombre: ";
+                getline(cin, nombre);
+                if (nombre.empty()) {
+                    cout << "El nombre no puede estar vacio.\n";
+                }
+            } while (nombre.empty());
+
+            cout << "\nSeleccione cantidad de rondas:\n";
+            cout << "1. 5 rondas (Rapido)\n";
+            cout << "2. 10 rondas (Normal)\n";
+            cout << "3. 15 rondas (Extremo)\n";
+            cout << "Opcion: ";
+
+            numRondas = leerOpcionSegura(1, 3);
+
+            int rondasTotal;
+            switch (numRondas) {
+            case 1: rondasTotal = 5; break;
+            case 2: rondasTotal = 10; break;
+            case 3: rondasTotal = 15; break;
+            default: rondasTotal = 10;
+            }
+
+            Jugador jugador(nombre, 'a');
+
+            Juego juego(jugador, jugador, 3);
+            juego.modoDesafioVelocidad(jugador, rondasTotal);
+
+            cout << "\nPresione Enter para volver al menu...";
             cin.ignore();
             break;
+        }
 
         case 6:
             // Volver al menú principal
@@ -290,12 +326,14 @@ void menuPrincipal() {
                 cout << "=============================\n";
                 cout << "1. Duelo Clasico\n";
                 cout << "2. Rondas Multiples\n";
-                cout << "3. Torneos\n";              // AGREGAR
-                cout << "4. Ranking General (Todos los modos)\n";  // CAMBIAR de 3 a 4
-                cout << "5. Volver al menu principal\n";           // CAMBIAR de 4 a 5
+                cout << "3. Torneos\n";
+                cout << "4. Desafio de Velocidad\n";
+                cout << "5. Ranking General (Todos los modos)\n";
+                cout << "6. Volver al menu principal\n";
                 cout << "=============================\n";
                 cout << "Seleccione una opcion: ";
-                opcionRanking = leerOpcionSegura(1, 5);  // CAMBIAR de 4 a 5
+
+                opcionRanking = leerOpcionSegura(1, 6);
 
                 system("cls");
                 switch (opcionRanking) {
@@ -310,22 +348,27 @@ void menuPrincipal() {
                     cin.ignore();
                     break;
                 case 3:
-                    contenedor.cargarDatosPorModo("torneo");  // NUEVO
+                    contenedor.cargarDatosPorModo("torneo");
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 4:  // CAMBIAR de 3 a 4
+                case 4:
+                    contenedor.cargarDatosPorModo("velocidad");
+                    cout << "\nPresione Enter para volver...";
+                    cin.ignore();
+                    break;
+                case 5:
                     contenedor.cargarDatos();
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 5:  // CAMBIAR de 4 a 5
+                case 6:
                     break;
                 default:
                     cout << "Opcion invalida.\n";
                     this_thread::sleep_for(chrono::seconds(1));
                 }
-            } while (opcionRanking != 5);  // CAMBIAR de 4 a 5
+            } while (opcionRanking != 6);
             break;
         }
 
@@ -431,6 +474,7 @@ void menuPrincipal() {
 
 // Función principal
 int main() {
+    srand(time(0));  // Inicializar generador aleatorio para modo velocidad
     menuPrincipal();
     return 0;
 }
