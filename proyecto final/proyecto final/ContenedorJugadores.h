@@ -66,7 +66,7 @@ private:
         return -1;
     }
 
-    // Actualizar o crear jugador con modo específico - CORREGIDO TIEMPO EN 0
+    // Actualizar o crear jugador con modo específico
     void actualizarJugadorConModo(const Jugador& jugador) {
         int index = buscarJugadorPorModo(jugador.getNombre(), jugador.getModoJuego());
 
@@ -74,7 +74,7 @@ private:
             // Jugador nuevo en este modo - crear entrada
             float tiempoAGuardar = jugador.getTiempoReaccion();
             if (tiempoAGuardar <= 0) {
-                tiempoAGuardar = 999.9f; // Valor alto por defecto si no tiene tiempo válido
+                tiempoAGuardar = 999.9f;
             }
 
             json nuevoJugador = {
@@ -94,7 +94,6 @@ private:
             datos["jugadores"][index]["partidas"] =
                 datos["jugadores"][index]["partidas"].get<int>() + jugador.getPartidas();
 
-            // Actualizar mejor tiempo si es menor Y válido (mayor a 0)
             float mejorTiempo = datos["jugadores"][index]["mejor_tiempo"].get<float>();
             float nuevoTiempo = jugador.getTiempoReaccion();
 
@@ -111,7 +110,7 @@ public:
 
     // Guardar datos de una partida
     void guardarDatos(const Jugador& j1, const Jugador& j2) {
-        cargarJSON(); // Recargar para tener datos actualizados
+        cargarJSON();
 
         actualizarJugadorConModo(j1);
         actualizarJugadorConModo(j2);
@@ -122,7 +121,7 @@ public:
 
     // Mostrar historial completo (ranking)
     void cargarDatos() {
-        cargarJSON(); // Recargar datos actuales
+        cargarJSON();
 
         if (datos["jugadores"].empty()) {
             cout << "\n=== HISTORIAL DE JUGADORES ===\n";
@@ -134,7 +133,6 @@ public:
         cout << "              ** HISTORIAL DE JUGADORES **                    \n";
         cout << "===============================================================\n";
 
-        // Ordenar por victorias (de mayor a menor)
         json jugadoresOrdenados = datos["jugadores"];
         for (size_t i = 0; i < jugadoresOrdenados.size(); i++) {
             for (size_t j = i + 1; j < jugadoresOrdenados.size(); j++) {
@@ -153,7 +151,6 @@ public:
 
             cout << " " << (i + 1) << ". " << nombre;
 
-            // Espaciado dinámico
             int espacios = 25 - nombre.length() - to_string(i + 1).length();
             for (int k = 0; k < espacios; k++) cout << " ";
 
@@ -167,7 +164,6 @@ public:
 
             cout << "\n";
 
-            // CORRECCIÓN: No mostrar tiempos inválidos
             if (mejorTiempo > 0 && mejorTiempo < 999) {
                 cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
             }
@@ -182,9 +178,8 @@ public:
 
     // Mostrar ranking filtrado por modo de juego
     void cargarDatosPorModo(const string& modo) {
-        cargarJSON(); // Recargar datos actuales
+        cargarJSON();
 
-        // Filtrar jugadores por modo
         json jugadoresFiltrados = json::array();
         for (const auto& jugador : datos["jugadores"]) {
             if (jugador.contains("modo_juego") && jugador["modo_juego"] == modo) {
@@ -212,7 +207,6 @@ public:
         cout << " **                    \n";
         cout << "===============================================================\n";
 
-        // Ordenar por victorias (de mayor a menor)
         for (size_t i = 0; i < jugadoresFiltrados.size(); i++) {
             for (size_t j = i + 1; j < jugadoresFiltrados.size(); j++) {
                 if (jugadoresFiltrados[i]["victorias"].get<int>() < jugadoresFiltrados[j]["victorias"].get<int>()) {
@@ -230,11 +224,9 @@ public:
 
             cout << " " << (i + 1) << ". " << nombre;
 
-            // Espaciado dinámico
             int espacios = 25 - nombre.length() - to_string(i + 1).length();
             for (int k = 0; k < espacios; k++) cout << " ";
 
-            // Mostrar diferente según el modo
             if (modo == "velocidad") {
                 cout << "| Puntuacion: " << victorias;
                 cout << " | Rondas: " << partidas;
@@ -251,7 +243,6 @@ public:
 
             cout << "\n";
 
-            // CORRECCIÓN: No mostrar tiempos inválidos
             if (mejorTiempo > 0 && mejorTiempo < 999) {
                 cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
             }
@@ -313,7 +304,6 @@ public:
     void eliminarJugador(const string& nombre) {
         cargarJSON();
 
-        // CORRECCIÓN: Eliminar TODAS las entradas de ese jugador (en todos los modos)
         bool encontrado = false;
         for (int i = datos["jugadores"].size() - 1; i >= 0; i--) {
             if (datos["jugadores"][i]["nombre"] == nombre) {

@@ -123,9 +123,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animaciones.cpp" />
     <ClCompile Include="proyecto final.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animaciones.h" />
     <ClInclude Include="ContenedorJugadores.h" />
     <ClInclude Include="Juego.h" />
     <ClInclude Include="Jugador.h" />
