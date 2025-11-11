@@ -21,15 +21,31 @@
             "mejor_tiempo": 0.8602855205535889,
             "modo_juego": "clasico",
             "nombre": "1",
-            "partidas": 1,
+            "partidas": 2,
             "tecla": "a",
-            "victorias": 1
+            "victorias": 2
         },
         {
             "mejor_tiempo": 0.9104730486869812,
             "modo_juego": "clasico",
             "nombre": "2",
-            "partidas": 1,
+            "partidas": 2,
+            "tecla": "l",
+            "victorias": 0
+        },
+        {
+            "mejor_tiempo": 0.03717439994215965,
+            "modo_juego": "velocidad",
+            "nombre": "a",
+            "partidas": 5,
+            "tecla": "a",
+            "victorias": 450
+        },
+        {
+            "mejor_tiempo": 999.9000244140625,
+            "modo_juego": "velocidad",
+            "nombre": "",
+            "partidas": 0,
             "tecla": "l",
             "victorias": 0
         }
