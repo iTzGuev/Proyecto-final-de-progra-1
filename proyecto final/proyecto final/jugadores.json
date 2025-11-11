@@ -2,34 +2,34 @@
     "juego": "Duelo de Reflejos",
     "jugadores": [
         {
-            "mejor_tiempo": 0.10000000149011612,
-            "modo_juego": "torneo",
+            "mejor_tiempo": 0.22298049926757813,
+            "modo_juego": "clasico",
+            "nombre": "a",
+            "partidas": 2,
+            "tecla": "a",
+            "victorias": 1
+        },
+        {
+            "mejor_tiempo": 0.2686695158481598,
+            "modo_juego": "clasico",
+            "nombre": "b",
+            "partidas": 2,
+            "tecla": "l",
+            "victorias": 1
+        },
+        {
+            "mejor_tiempo": 0.8602855205535889,
+            "modo_juego": "clasico",
             "nombre": "1",
             "partidas": 1,
             "tecla": "a",
             "victorias": 1
         },
         {
-            "mejor_tiempo": 999.9000244140625,
-            "modo_juego": "torneo",
-            "nombre": "",
-            "partidas": 0,
-            "tecla": "l",
-            "victorias": 0
-        },
-        {
-            "mejor_tiempo": 0.2842642068862915,
-            "modo_juego": "velocidad",
-            "nombre": "Ariel",
-            "partidas": 5,
-            "tecla": "a",
-            "victorias": 350
-        },
-        {
-            "mejor_tiempo": 999.9000244140625,
-            "modo_juego": "velocidad",
-            "nombre": "",
-            "partidas": 0,
+            "mejor_tiempo": 0.9104730486869812,
+            "modo_juego": "clasico",
+            "nombre": "2",
+            "partidas": 1,
             "tecla": "l",
             "victorias": 0
         }

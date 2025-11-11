@@ -1,8 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include "Librerias.h"
 #include "Jugador.h"
 #include "ContenedorJugadores.h"
 #include "Tempo.h"
+#include "Animaciones.h"
 
 // Clase Juego con diferentes modos
 class Juego {
@@ -14,19 +15,41 @@ private:
     Temporizador temporizador;
     ContenedorJugadores contenedor;
 
-    // Método privado para ejecutar una sola ronda
+    // MÃ©todo privado para ejecutar una sola ronda CON ANIMACIONES
     void ejecutarRonda() {
-        cout << "\n=== DUELO DE REFLEJOS ===\n\n";
-        cout << jugador1.getNombre() << " presiona [" << jugador1.getTecla() << "]\n";
-        cout << jugador2.getNombre() << " presiona [" << jugador2.getTecla() << "]\n\n";
-        cout << "Preparense...\n";
+        // Mostrar pantalla inicial con ambas pistolas
+        system("cls");
+        cout << "\n=== DUELO DE REFLEJOS ===\n";
+        Animaciones::mostrarAmbasPistolas(
+            jugador1.getNombre(),
+            jugador2.getNombre(),
+            jugador1.getTecla(),
+            jugador2.getTecla()
+        );
 
-        // Cuenta regresiva
+        cout << "\nPresiona Enter cuando estes listo...";
+        cin.ignore();
+
+        // AnimaciÃ³n de "Preparense"
+        Animaciones::mostrarPreparense();
+        this_thread::sleep_for(chrono::milliseconds(1500));
+
+        // Cuenta regresiva animada
         for (int i = tiempoCuentaRegresiva; i > 0; --i) {
-            cout << i << "...\n";
+            Animaciones::mostrarCuentaRegresiva(i);
             this_thread::sleep_for(chrono::seconds(1));
         }
-        cout << "¡DISPAREN!\n";
+
+        // Mostrar "Â¡DISPAREN!"
+        Animaciones::mostrarDisparen();
+
+        // Mostrar pistolas en posiciÃ³n
+        Animaciones::mostrarAmbasPistolas(
+            jugador1.getNombre(),
+            jugador2.getNombre(),
+            jugador1.getTecla(),
+            jugador2.getTecla()
+        );
 
         temporizador.iniciar();
         bool jugador1Listo = false;
@@ -41,31 +64,60 @@ private:
                 if (tecla == jugador1.getTecla() && !jugador1Listo) {
                     jugador1.registrarTiempo(tiempo);
                     jugador1Listo = true;
-                    cout << jugador1.getNombre() << " disparó en " << fixed << setprecision(4) << tiempo << " segundos.\n";
+
+                    // Mostrar animaciÃ³n de disparo
+                    system("cls");
+                    cout << "\n=== " << jugador1.getNombre() << " DISPARA ===\n";
+                    Animaciones::mostrarDisparoIzquierdo();
+                    cout << "\nTiempo: " << fixed << setprecision(4) << tiempo << " segundos\n";
+
+                    if (!jugador2Listo) {
+                        cout << "\nEsperando a " << jugador2.getNombre() << "...\n";
+                    }
                 }
                 else if (tecla == jugador2.getTecla() && !jugador2Listo) {
                     jugador2.registrarTiempo(tiempo);
                     jugador2Listo = true;
-                    cout << jugador2.getNombre() << " disparó en " << fixed << setprecision(4) << tiempo << " segundos.\n";
+
+                    // Si el jugador 1 ya disparÃ³, mostrar ambos
+                    if (jugador1Listo) {
+                        system("cls");
+                        cout << "\n=== AMBOS JUGADORES DISPARARON ===\n";
+                        cout << "\n" << jugador1.getNombre() << ":\n";
+                        Animaciones::mostrarDisparoIzquierdo();
+                        cout << "Tiempo: " << fixed << setprecision(4) << jugador1.getTiempoReaccion() << "s\n";
+
+                        cout << "\n" << jugador2.getNombre() << ":\n";
+                        Animaciones::mostrarDisparoDerecho();
+                        cout << "Tiempo: " << fixed << setprecision(4) << tiempo << "s\n";
+                    }
+                    else {
+                        system("cls");
+                        cout << "\n=== " << jugador2.getNombre() << " DISPARA ===\n";
+                        Animaciones::mostrarDisparoDerecho();
+                        cout << "\nTiempo: " << fixed << setprecision(4) << tiempo << " segundos\n";
+                        cout << "\nEsperando a " << jugador1.getNombre() << "...\n";
+                    }
                 }
             }
         }
+
+        // PequeÃ±a pausa antes de mostrar resultado
+        this_thread::sleep_for(chrono::milliseconds(1500));
     }
 
-    // Método privado para determinar ganador de una ronda
+    // MÃ©todo privado para determinar ganador de una ronda
     int determinarGanadorRonda() {
         float t1 = jugador1.getTiempoReaccion();
         float t2 = jugador2.getTiempoReaccion();
 
-        if (t1 < t2) return 1;      // Gana jugador 1
-        else if (t2 < t1) return 2; // Gana jugador 2
-        else return 0;              // Empate
+        if (t1 < t2) return 1;
+        else if (t2 < t1) return 2;
+        else return 0;
     }
 
-    // Método privado para mostrar resultado final y guardar
+    // MÃ©todo privado para mostrar resultado final y guardar CON ANIMACIONES
     void finalizarPartida(int ganador, const string& modo) {
-        cout << "\n=== RESULTADOS ===\n";
-
         // Establecer el modo de juego antes de guardar
         jugador1.setModoJuego(modo);
         jugador2.setModoJuego(modo);
@@ -74,16 +126,20 @@ private:
         jugador2.incrementarPartidas();
 
         if (ganador == 1) {
-            cout << jugador1.getNombre() << " gana el duelo!\n";
+            Animaciones::mostrarGanador(jugador1.getNombre(), false);
             jugador1.incrementarVictorias();
         }
         else if (ganador == 2) {
-            cout << jugador2.getNombre() << " gana el duelo!\n";
+            Animaciones::mostrarGanador(jugador2.getNombre(), false);
             jugador2.incrementarVictorias();
         }
         else {
-            cout << "¡Empate perfecto!\n";
+            Animaciones::mostrarGanador("", true);
         }
+
+        cout << "\n=== ESTADISTICAS ===\n";
+        cout << jugador1.getNombre() << ": " << fixed << setprecision(4) << jugador1.getTiempoReaccion() << "s\n";
+        cout << jugador2.getNombre() << ": " << fixed << setprecision(4) << jugador2.getTiempoReaccion() << "s\n";
 
         contenedor.guardarDatos(jugador1, jugador2);
     }
@@ -93,7 +149,7 @@ public:
         : jugador1(j1), jugador2(j2), tiempoCuentaRegresiva(cuenta), enCurso(false) {
     }
 
-    // MODO 1: Duelo Clásico (una sola ronda) - CORREGIDO SIN RECURSIVIDAD
+    // MODO 1: Duelo ClÃ¡sico (una sola ronda)
     void modoDueloClasico() {
         bool quiereJugar = true;
 
@@ -104,14 +160,12 @@ public:
             int ganador = determinarGanadorRonda();
             finalizarPartida(ganador, "clasico");
 
-            // Preguntar si quieren volver a jugar
             char respuesta;
-            cout << "\n¿Quieren jugar otra vez? (s/n): ";
+            cout << "\nÂ¿Quieren jugar otra vez? (s/n): ";
             cin >> respuesta;
             cin.ignore();
 
             if (respuesta == 's' || respuesta == 'S') {
-                // Resetear para nueva partida
                 jugador1.registrarTiempo(0);
                 jugador2.registrarTiempo(0);
                 jugador1.setVictorias(0);
@@ -128,19 +182,17 @@ public:
         enCurso = false;
     }
 
-    // MODO 2: Rondas Múltiples (mejor de X)
+    // MODO 2: Rondas MÃºltiples (mejor de X)
     void modoRondasMultiples(int totalRondas) {
         enCurso = true;
         int victoriasJ1 = 0;
         int victoriasJ2 = 0;
         int rondasNecesarias = (totalRondas / 2) + 1;
 
-        // Variables para guardar el mejor tiempo de cada jugador
         float mejorTiempoJ1 = 0;
         float mejorTiempoJ2 = 0;
 
         for (int ronda = 1; ronda <= totalRondas; ronda++) {
-            // Verificar si alguien ya ganó
             if (victoriasJ1 >= rondasNecesarias || victoriasJ2 >= rondasNecesarias) {
                 break;
             }
@@ -155,7 +207,6 @@ public:
 
             ejecutarRonda();
 
-            // Determinar ganador de la ronda
             int ganadorRonda = determinarGanadorRonda();
 
             cout << "\n--- Resultado de la ronda ---\n";
@@ -168,10 +219,9 @@ public:
                 victoriasJ2++;
             }
             else {
-                cout << "¡Empate en esta ronda!\n";
+                cout << "Â¡Empate en esta ronda!\n";
             }
 
-            // Guardar mejor tiempo de cada jugador
             float t1 = jugador1.getTiempoReaccion();
             float t2 = jugador2.getTiempoReaccion();
 
@@ -186,11 +236,9 @@ public:
             cin.ignore();
         }
 
-        // Establecer el mejor tiempo de todo el match
         if (mejorTiempoJ1 > 0) jugador1.registrarTiempo(mejorTiempoJ1);
         if (mejorTiempoJ2 > 0) jugador2.registrarTiempo(mejorTiempoJ2);
 
-        // Resultado final
         system("cls");
         cout << "\n========================================\n";
         cout << "         RESULTADO FINAL\n";
@@ -199,7 +247,6 @@ public:
         cout << jugador2.getNombre() << ": " << victoriasJ2 << " rondas ganadas\n";
         cout << "========================================\n\n";
 
-        // Determinar ganador del match
         int ganadorFinal = 0;
         if (victoriasJ1 > victoriasJ2) {
             cout << "*** " << jugador1.getNombre() << " GANA EL MATCH! ***\n";
@@ -217,7 +264,7 @@ public:
         enCurso = false;
     }
 
-    // MODO 3: Modo Práctica (un solo jugador, sin guardar estadísticas)
+    // MODO 3: Modo PrÃ¡ctica
     void modoPractica(Jugador& jugador, int numeroIntentos = 5) {
         enCurso = true;
         float mejorTiempo = 0;
@@ -245,15 +292,15 @@ public:
                 cout << "Mejor tiempo hasta ahora: " << fixed << setprecision(4) << mejorTiempo << "s\n";
             }
 
-            cout << "\nPresiona [" << jugador.getTecla() << "] cuando veas ¡DISPARA!\n";
+            cout << "\nPresiona [" << jugador.getTecla() << "] cuando veas Â¡DISPARA!\n";
             cout << "\nPreparate...\n";
 
-            // Cuenta regresiva
             for (int i = tiempoCuentaRegresiva; i > 0; --i) {
                 cout << i << "...\n";
                 this_thread::sleep_for(chrono::seconds(1));
             }
-            cout << "\n¡DISPARA!\n";
+            cout << "\nÂ¡DISPARA!\n";
+            Animaciones::mostrarDisparoSimple();
 
             temporizador.iniciar();
             bool teclaPresionada = false;
@@ -272,21 +319,19 @@ public:
 
                         cout << "\nTiempo de reaccion: " << fixed << setprecision(4) << tiempoReaccion << " segundos\n";
 
-                        // Actualizar mejor tiempo
                         if (mejorTiempo == 0 || tiempoReaccion < mejorTiempo) {
                             mejorTiempo = tiempoReaccion;
-                            cout << "*** ¡NUEVO RECORD PERSONAL! ***\n";
+                            cout << "*** Â¡NUEVO RECORD PERSONAL! ***\n";
                         }
 
-                        // Feedback según el tiempo
                         if (tiempoReaccion < 0.2) {
-                            cout << "¡INCREIBLE! Reflejos de campeon!\n";
+                            cout << "Â¡INCREIBLE! Reflejos de campeon!\n";
                         }
                         else if (tiempoReaccion < 0.3) {
-                            cout << "¡Excelente! Muy rapido!\n";
+                            cout << "Â¡Excelente! Muy rapido!\n";
                         }
                         else if (tiempoReaccion < 0.4) {
-                            cout << "¡Bien! Buen tiempo.\n";
+                            cout << "Â¡Bien! Buen tiempo.\n";
                         }
                         else if (tiempoReaccion < 0.5) {
                             cout << "No esta mal, puedes mejorar.\n";
@@ -307,7 +352,6 @@ public:
             }
         }
 
-        // Mostrar resumen final
         system("cls");
         cout << "\n========================================\n";
         cout << "      RESUMEN DE PRACTICA\n";
@@ -328,14 +372,13 @@ public:
         enCurso = false;
     }
 
-    // MODO 4: Torneo (eliminación directa)
+    // MODO 4: Torneo
     void modoTorneo(vector<string>& nombresJugadores) {
         if (nombresJugadores.size() < 4 || nombresJugadores.size() > 16) {
             cout << "Error: El torneo requiere entre 4 y 16 jugadores.\n";
             return;
         }
 
-        // Validar que el número sea potencia de 2
         int numJugadores = nombresJugadores.size();
         if ((numJugadores & (numJugadores - 1)) != 0) {
             cout << "Error: El numero de jugadores debe ser 4, 8 o 16.\n";
@@ -346,7 +389,6 @@ public:
         vector<string> jugadoresActuales = nombresJugadores;
         int ronda = 1;
 
-        // Determinar nombre de la ronda
         auto obtenerNombreRonda = [](int jugadoresRestantes) -> string {
             if (jugadoresRestantes == 2) return "FINAL";
             if (jugadoresRestantes == 4) return "SEMIFINALES";
@@ -355,38 +397,31 @@ public:
             return "RONDA " + to_string(jugadoresRestantes / 2);
             };
 
-        // Bucle principal del torneo
         while (jugadoresActuales.size() > 1) {
-            system("cls");
-            cout << "\n============================================\n";
-            cout << "     " << obtenerNombreRonda(jugadoresActuales.size()) << "\n";
-            cout << "============================================\n";
-            cout << "Jugadores restantes: " << jugadoresActuales.size() << "\n";
-            cout << "============================================\n\n";
+            string nombreRonda = obtenerNombreRonda(jugadoresActuales.size());
+            Animaciones::mostrarBannerTorneo(nombreRonda, jugadoresActuales.size());
+
+            cout << "Presiona Enter para ver los duelos...\n";
+            cin.ignore();
 
             vector<string> ganadores;
 
-            // Enfrentar a los jugadores en pares
             for (size_t i = 0; i < jugadoresActuales.size(); i += 2) {
                 cout << "\n--- Duelo " << (i / 2 + 1) << " ---\n";
                 cout << jugadoresActuales[i] << " vs " << jugadoresActuales[i + 1] << "\n";
                 cout << "Presiona Enter para comenzar...";
                 cin.ignore();
 
-                // Crear jugadores temporales
                 Jugador j1(jugadoresActuales[i], 'a');
                 Jugador j2(jugadoresActuales[i + 1], 'l');
 
-                // Asignar a los atributos de la clase
                 jugador1 = j1;
                 jugador2 = j2;
 
-                // Ejecutar duelo
                 system("cls");
                 cout << "\n=== " << jugadoresActuales[i] << " vs " << jugadoresActuales[i + 1] << " ===\n";
                 ejecutarRonda();
 
-                // Determinar ganador
                 int ganador = determinarGanadorRonda();
                 string nombreGanador;
 
@@ -399,9 +434,8 @@ public:
                     cout << "\n*** " << nombreGanador << " avanza a la siguiente ronda! ***\n";
                 }
                 else {
-                    // En caso de empate, elegir al primero
                     nombreGanador = jugadoresActuales[i];
-                    cout << "\n¡Empate! " << nombreGanador << " avanza por orden.\n";
+                    cout << "\nÂ¡Empate! " << nombreGanador << " avanza por orden.\n";
                 }
 
                 ganadores.push_back(nombreGanador);
@@ -414,19 +448,9 @@ public:
             ronda++;
         }
 
-        // Anunciar campeón
-        system("cls");
-        cout << "\n";
-        cout << "================================================\n";
-        cout << "                                                \n";
-        cout << "     *** CAMPEON DEL TORNEO ***                \n";
-        cout << "                                                \n";
-        cout << "           " << jugadoresActuales[0] << "           \n";
-        cout << "                                                \n";
-        cout << "================================================\n";
-        cout << "\n¡Felicidades! Has ganado el torneo!\n";
+        Animaciones::mostrarCampeonTorneo(jugadoresActuales[0]);
+        cout << "\nÂ¡Felicidades " << jugadoresActuales[0] << "! Has ganado el torneo!\n";
 
-        // Guardar estadísticas del campeón
         Jugador campeon(jugadoresActuales[0], 'a');
         campeon.incrementarVictorias();
         campeon.incrementarPartidas();
@@ -441,7 +465,7 @@ public:
         enCurso = false;
     }
 
-    // MODO 5: Desafío de Velocidad (rondas rápidas con dificultad progresiva)
+    // MODO 5: DesafÃ­o de Velocidad
     void modoDesafioVelocidad(Jugador& jugador, int numeroRondas = 10) {
         enCurso = true;
         float tiempoEspera = 3.0f;
@@ -465,7 +489,6 @@ public:
         cout << "\nPresiona Enter para comenzar...";
         cin.ignore();
 
-        // Sistema de rondas progresivas
         for (int ronda = 1; ronda <= numeroRondas; ronda++) {
             system("cls");
             cout << "\n============================================\n";
@@ -480,18 +503,17 @@ public:
 
             cout << "Preparate...\n";
 
-            // Espera aleatoria para evitar anticipación
-            int esperaAleatoria = (rand() % 2000) + 1000; // Entre 1-3 segundos
+            int esperaAleatoria = (rand() % 2000) + 1000;
             this_thread::sleep_for(chrono::milliseconds(esperaAleatoria));
 
-            cout << "\n¡AHORA!\n";
+            cout << "\nÂ¡AHORA!\n";
+            Animaciones::mostrarDisparoSimple();
 
             temporizador.iniciar();
             bool teclaPresionada = false;
             bool teclaCorrecta = false;
             float tiempoReaccion = 0;
 
-            // Esperar respuesta (máximo 2 segundos)
             auto tiempoLimite = high_resolution_clock::now() + chrono::seconds(2);
 
             while (!teclaPresionada && high_resolution_clock::now() < tiempoLimite) {
@@ -507,16 +529,15 @@ public:
                 }
             }
 
-            // Calcular puntos
             int puntosRonda = 0;
 
             if (!teclaPresionada) {
-                cout << "\n¡Muy lento! No respondiste a tiempo.\n";
+                cout << "\nÂ¡Muy lento! No respondiste a tiempo.\n";
                 puntosRonda = -50;
                 errores++;
             }
             else if (!teclaCorrecta) {
-                cout << "\n¡Tecla incorrecta!\n";
+                cout << "\nÂ¡Tecla incorrecta!\n";
                 puntosRonda = -30;
                 errores++;
             }
@@ -524,42 +545,39 @@ public:
                 rondasCompletadas++;
                 cout << "\nTiempo: " << fixed << setprecision(4) << tiempoReaccion << "s\n";
 
-                // Actualizar mejor tiempo
                 if (mejorTiempo == 0 || tiempoReaccion < mejorTiempo) {
                     mejorTiempo = tiempoReaccion;
                 }
 
-                // Sistema de puntuación basado en velocidad
                 if (tiempoReaccion < 0.15) {
                     puntosRonda = 200;
-                    cout << "¡INCREIBLE! +200 puntos\n";
+                    cout << "Â¡INCREIBLE! +200 puntos\n";
                 }
                 else if (tiempoReaccion < 0.20) {
                     puntosRonda = 150;
-                    cout << "¡EXCELENTE! +150 puntos\n";
+                    cout << "Â¡EXCELENTE! +150 puntos\n";
                 }
                 else if (tiempoReaccion < 0.30) {
                     puntosRonda = 100;
-                    cout << "¡MUY BIEN! +100 puntos\n";
+                    cout << "Â¡MUY BIEN! +100 puntos\n";
                 }
                 else if (tiempoReaccion < 0.40) {
                     puntosRonda = 75;
-                    cout << "¡BIEN! +75 puntos\n";
+                    cout << "Â¡BIEN! +75 puntos\n";
                 }
                 else if (tiempoReaccion < 0.50) {
                     puntosRonda = 50;
-                    cout << "¡ACEPTABLE! +50 puntos\n";
+                    cout << "Â¡ACEPTABLE! +50 puntos\n";
                 }
                 else {
                     puntosRonda = 25;
-                    cout << "¡LENTO! +25 puntos\n";
+                    cout << "Â¡LENTO! +25 puntos\n";
                 }
 
-                // Bonus por racha perfecta
                 if (errores == 0 && ronda >= 5) {
                     int bonus = 50;
                     puntosRonda += bonus;
-                    cout << "¡RACHA PERFECTA! +" << bonus << " puntos bonus\n";
+                    cout << "Â¡RACHA PERFECTA! +" << bonus << " puntos bonus\n";
                 }
             }
 
@@ -573,7 +591,6 @@ public:
 
             cout << "Total: " << puntosTotales << " puntos\n";
 
-            // Reducir tiempo entre rondas para aumentar dificultad
             tiempoEspera = max(0.5f, tiempoEspera - 0.1f);
 
             if (ronda < numeroRondas) {
@@ -582,7 +599,6 @@ public:
             }
         }
 
-        // Resumen final
         system("cls");
         cout << "\n================================================\n";
         cout << "      DESAFIO DE VELOCIDAD COMPLETADO\n";
@@ -596,24 +612,22 @@ public:
         cout << "PUNTUACION FINAL: " << puntosTotales << " puntos\n";
         cout << "================================================\n\n";
 
-        // Clasificación final
         if (puntosTotales >= 1500) {
-            cout << "¡MAESTRO DE LA VELOCIDAD! Eres increible!\n";
+            cout << "Â¡MAESTRO DE LA VELOCIDAD! Eres increible!\n";
         }
         else if (puntosTotales >= 1000) {
-            cout << "¡EXPERTO! Excelentes reflejos!\n";
+            cout << "Â¡EXPERTO! Excelentes reflejos!\n";
         }
         else if (puntosTotales >= 700) {
-            cout << "¡COMPETENTE! Buen desempeno!\n";
+            cout << "Â¡COMPETENTE! Buen desempeno!\n";
         }
         else if (puntosTotales >= 400) {
-            cout << "¡PRINCIPIANTE! Sigue practicando!\n";
+            cout << "Â¡PRINCIPIANTE! Sigue practicando!\n";
         }
         else {
-            cout << "¡NOVATO! Necesitas mas entrenamiento!\n";
+            cout << "Â¡NOVATO! Necesitas mas entrenamiento!\n";
         }
 
-        // Guardar estadísticas (puntos como "victorias", rondas como "partidas")
         jugador.setVictorias(puntosTotales);
         jugador.setPartidas(numeroRondas);
         jugador.registrarTiempo(mejorTiempo);
@@ -627,7 +641,7 @@ public:
         enCurso = false;
     }
 
-    // Método legacy para mantener compatibilidad
+    // MÃ©todo legacy para mantener compatibilidad
     void iniciarJuego() {
         modoDueloClasico();
     }

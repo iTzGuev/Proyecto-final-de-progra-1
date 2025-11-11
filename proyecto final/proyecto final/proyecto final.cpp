@@ -3,6 +3,7 @@
 #include "Librerias.h"
 #include "Juego.h"
 #include "Tempo.h"
+#include "Animaciones.h"
 
 // Función para validar entrada numérica
 int leerOpcionSegura(int min, int max) {
