@@ -1,46 +1,5 @@
 {
     "juego": "Duelo de Reflejos",
-    "jugadores": [
-        {
-            "mejor_tiempo": 0.7021191120147705,
-            "modo_juego": "clasico",
-            "nombre": "1",
-            "partidas": 1,
-            "tecla": "a",
-            "victorias": 1
-        },
-        {
-            "mejor_tiempo": 0.7457285523414612,
-            "modo_juego": "clasico",
-            "nombre": "2",
-            "partidas": 1,
-            "tecla": "l",
-            "victorias": 0
-        },
-        {
-            "mejor_tiempo": 0.2452063113451004,
-            "modo_juego": "velocidad",
-            "nombre": "a",
-            "partidas": 10,
-            "tecla": "a",
-            "victorias": 700
-        },
-        {
-            "mejor_tiempo": 0.7464196085929871,
-            "modo_juego": "clasico",
-            "nombre": "a",
-            "partidas": 1,
-            "tecla": "a",
-            "victorias": 1
-        },
-        {
-            "mejor_tiempo": 0.7955489158630371,
-            "modo_juego": "clasico",
-            "nombre": "b",
-            "partidas": 1,
-            "tecla": "l",
-            "victorias": 0
-        }
-    ],
-    "version": "1.0"
+    "jugadores": [],
+    "version": "2.0"
 }
