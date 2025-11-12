@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -8,6 +9,8 @@
 #include <nlohmann/json.hpp>  // Para JSON
 #include <vector>
 #include <set>
+#include <windows.h>   // NUEVO: Para gráficos en consola Windows
+
 using namespace std;
 using namespace std::chrono;
-using json = nlohmann::json;  // Alias para facilitar el uso de JSON
+using json = nlohmann::json;  // Alias para facilitar el uso de JSONSON

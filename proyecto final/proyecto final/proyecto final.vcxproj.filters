@@ -35,6 +35,9 @@
     <ClInclude Include="Tempo.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
+    <ClInclude Include="Graficos.h">
+      <Filter>Archivos de origen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -3,6 +3,7 @@
 #include "Librerias.h"
 #include "Juego.h"
 #include "Tempo.h"
+#include "Graficos.h"
 
 // Función para validar entrada numérica
 int leerOpcionSegura(int min, int max) {
@@ -29,48 +30,61 @@ int leerOpcionSegura(int min, int max) {
 bool validarNombres(string& nombre1, string& nombre2) {
     if (nombre1.empty() || nombre2.empty()) {
         cout << "\nError: Los nombres no pueden estar vacios.\n";
+        this_thread::sleep_for(chrono::seconds(2));
         return false;
     }
 
     if (nombre1 == nombre2) {
         cout << "\nError: Los jugadores deben tener nombres diferentes.\n";
+        this_thread::sleep_for(chrono::seconds(2));
         return false;
     }
 
     return true;
 }
 
-// Función para el submenú de modos de juego
+// Función para el submenú de modos de juego - MEJORADO CON GRÁFICOS
 void menuModosJuego() {
+    Graficos gfx; // Crear objeto de gráficos local
     int opcion = 0;
 
     do {
-        system("cls");
-        cout << "=============================\n";
-        cout << "      MODOS DE JUEGO       \n";
-        cout << "=============================\n";
-        cout << "1. Duelo Clasico (1 vs 1)\n";
-        cout << "2. Rondas Multiples (Mejor de X)\n";
-        cout << "3. Modo Practica\n";
-        cout << "4. Torneo\n";
-        cout << "5. Desafio de Velocidad (Proximamente)\n";
-        cout << "6. Volver al menu principal\n";
-        cout << "=============================\n";
-        cout << "Seleccione un modo: ";
+        gfx.limpiar();
+        gfx.ocultarCursor();
+        gfx.rellenarArea(0, 0, 120, 30, Graficos::AZUL_OSCURO);
+
+        gfx.textoCentrado("????????????????????????????????????????????", 5, Graficos::AMARILLO);
+        gfx.textoCentrado("          M O D O S   D E   J U E G O", 7, Graficos::AMARILLO);
+        gfx.textoCentrado("????????????????????????????????????????????", 9, Graficos::AMARILLO);
+
+        gfx.texto("1. Duelo Clasico (1 vs 1)", 40, 12, Graficos::VERDE);
+        gfx.texto("2. Rondas Multiples (Mejor de X)", 40, 14, Graficos::CYAN);
+        gfx.texto("3. Modo Practica", 40, 16, Graficos::MAGENTA);
+        gfx.texto("4. Torneo", 40, 18, Graficos::ROJO);
+        gfx.texto("5. Desafio de Velocidad (Proximamente)", 40, 20, Graficos::GRIS_CLARO);
+        gfx.texto("6. Volver al menu principal", 40, 22, Graficos::AMARILLO_OSCURO);
+
+        gfx.mostrarCursor();
+        gfx.texto("Seleccione un modo: ", 40, 25, Graficos::BLANCO);
+        gfx.gotoxy(61, 25);
 
         opcion = leerOpcionSegura(1, 6);
 
         switch (opcion) {
         case 1: {
-            // Duelo Clásico 1v1
-            system("cls");
-            string nombre1, nombre2;
-            cout << "=== DUELO CLASICO ===\n\n";
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::VERDE_OSCURO);
+            gfx.textoCentrado("=== DUELO CLASICO ===", 8, Graficos::AMARILLO);
 
+            string nombre1, nombre2;
             do {
-                cout << "Ingrese nombre del Jugador 1: ";
+                gfx.mostrarCursor();
+                gfx.texto("Ingrese nombre del Jugador 1: ", 35, 12, Graficos::CYAN);
+                gfx.gotoxy(66, 12);
                 getline(cin, nombre1);
-                cout << "Ingrese nombre del Jugador 2: ";
+
+                gfx.texto("Ingrese nombre del Jugador 2: ", 35, 14, Graficos::MAGENTA);
+                gfx.gotoxy(66, 14);
                 getline(cin, nombre2);
             } while (!validarNombres(nombre1, nombre2));
 
@@ -80,31 +94,36 @@ void menuModosJuego() {
             Juego juego(j1, j2, 3);
             juego.modoDueloClasico();
 
-            cout << "\nPresione Enter para volver al menu...";
+            gfx.textoCentrado("Presione Enter para volver al menu...", 27, Graficos::BLANCO);
             cin.ignore();
             break;
         }
 
         case 2: {
-            // Rondas Múltiples
-            system("cls");
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::MAGENTA_OSCURO);
+            gfx.textoCentrado("=== RONDAS MULTIPLES ===", 8, Graficos::AMARILLO);
+
             string nombre1, nombre2;
             int numRondas;
 
-            cout << "=== RONDAS MULTIPLES ===\n\n";
-
             do {
-                cout << "Ingrese nombre del Jugador 1: ";
+                gfx.mostrarCursor();
+                gfx.texto("Ingrese nombre del Jugador 1: ", 35, 11, Graficos::CYAN);
+                gfx.gotoxy(66, 11);
                 getline(cin, nombre1);
-                cout << "Ingrese nombre del Jugador 2: ";
+
+                gfx.texto("Ingrese nombre del Jugador 2: ", 35, 13, Graficos::MAGENTA);
+                gfx.gotoxy(66, 13);
                 getline(cin, nombre2);
             } while (!validarNombres(nombre1, nombre2));
 
-            cout << "\nSeleccione cantidad de rondas:\n";
-            cout << "1. Mejor de 3\n";
-            cout << "2. Mejor de 5\n";
-            cout << "3. Mejor de 7\n";
-            cout << "Opcion: ";
+            gfx.texto("Seleccione cantidad de rondas:", 35, 16, Graficos::BLANCO);
+            gfx.texto("1. Mejor de 3", 40, 17, Graficos::VERDE);
+            gfx.texto("2. Mejor de 5", 40, 18, Graficos::AMARILLO);
+            gfx.texto("3. Mejor de 7", 40, 19, Graficos::ROJO);
+            gfx.texto("Opcion: ", 40, 21, Graficos::BLANCO);
+            gfx.gotoxy(49, 21);
 
             numRondas = leerOpcionSegura(1, 3);
 
@@ -122,33 +141,38 @@ void menuModosJuego() {
             Juego juego(j1, j2, 3);
             juego.modoRondasMultiples(rondasTotal);
 
-            cout << "\nPresione Enter para volver al menu...";
+            gfx.textoCentrado("Presione Enter para volver al menu...", 27, Graficos::BLANCO);
             cin.ignore();
             break;
         }
 
         case 3: {
-            // Modo Práctica
-            system("cls");
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::CYAN_OSCURO);
+            gfx.textoCentrado("=== MODO PRACTICA ===", 8, Graficos::AMARILLO);
+            gfx.textoCentrado("Este modo te permite entrenar sin afectar tus estadisticas.", 10, Graficos::BLANCO);
+
             string nombre;
             int numIntentos;
 
-            cout << "=== MODO PRACTICA ===\n\n";
-            cout << "Este modo te permite entrenar sin afectar tus estadisticas.\n\n";
-
             do {
-                cout << "Ingrese su nombre: ";
+                gfx.mostrarCursor();
+                gfx.texto("Ingrese su nombre: ", 40, 13, Graficos::BLANCO);
+                gfx.gotoxy(60, 13);
                 getline(cin, nombre);
                 if (nombre.empty()) {
-                    cout << "El nombre no puede estar vacio.\n";
+                    gfx.texto("El nombre no puede estar vacio.", 38, 15, Graficos::ROJO);
+                    this_thread::sleep_for(chrono::seconds(1));
+                    gfx.texto("                                ", 38, 15, Graficos::ROJO);
                 }
             } while (nombre.empty());
 
-            cout << "\nCuantos intentos deseas realizar?\n";
-            cout << "1. 3 intentos\n";
-            cout << "2. 5 intentos\n";
-            cout << "3. 10 intentos\n";
-            cout << "Opcion: ";
+            gfx.texto("Cuantos intentos deseas realizar?", 35, 16, Graficos::BLANCO);
+            gfx.texto("1. 3 intentos", 40, 17, Graficos::VERDE);
+            gfx.texto("2. 5 intentos", 40, 18, Graficos::AMARILLO);
+            gfx.texto("3. 10 intentos", 40, 19, Graficos::ROJO);
+            gfx.texto("Opcion: ", 40, 21, Graficos::BLANCO);
+            gfx.gotoxy(49, 21);
 
             numIntentos = leerOpcionSegura(1, 3);
 
@@ -165,23 +189,26 @@ void menuModosJuego() {
             Juego juego(jugador, jugador, 3);
             juego.modoPractica(jugador, intentosTotal);
 
-            cout << "\nPresione Enter para volver al menu...";
+            gfx.textoCentrado("Presione Enter para volver al menu...", 27, Graficos::BLANCO);
             cin.ignore();
             break;
         }
 
         case 4: {
-            // Modo Torneo
-            system("cls");
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::ROJO_OSCURO);
+            gfx.textoCentrado("=== MODO TORNEO ===", 8, Graficos::AMARILLO);
+            gfx.textoCentrado("Sistema de eliminacion directa", 10, Graficos::BLANCO);
+
             int numJugadores;
 
-            cout << "=== MODO TORNEO ===\n\n";
-            cout << "Sistema de eliminacion directa\n\n";
-            cout << "Seleccione cantidad de jugadores:\n";
-            cout << "1. 4 jugadores\n";
-            cout << "2. 8 jugadores\n";
-            cout << "3. 16 jugadores\n";
-            cout << "Opcion: ";
+            gfx.texto("Seleccione cantidad de jugadores:", 35, 13, Graficos::BLANCO);
+            gfx.texto("1. 4 jugadores", 40, 14, Graficos::VERDE);
+            gfx.texto("2. 8 jugadores", 40, 15, Graficos::AMARILLO);
+            gfx.texto("3. 16 jugadores", 40, 16, Graficos::ROJO);
+            gfx.mostrarCursor();
+            gfx.texto("Opcion: ", 40, 18, Graficos::BLANCO);
+            gfx.gotoxy(49, 18);
 
             numJugadores = leerOpcionSegura(1, 3);
 
@@ -194,22 +221,32 @@ void menuModosJuego() {
             }
 
             vector<string> nombresJugadores;
-            set<string> nombresUnicos; // Para verificar duplicados
+            set<string> nombresUnicos;
 
-            cout << "\n--- Ingrese los nombres de los jugadores ---\n";
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::ROJO_OSCURO);
+            gfx.textoCentrado("--- Ingrese los nombres de los jugadores ---", 6, Graficos::AMARILLO);
+
             for (int i = 1; i <= cantidadJugadores; i++) {
                 string nombre;
                 bool nombreValido = false;
 
                 while (!nombreValido) {
-                    cout << "Jugador " << i << ": ";
+                    gfx.mostrarCursor();
+                    string prompt = "Jugador " + to_string(i) + ": ";
+                    gfx.texto(prompt, 40, 8 + i, Graficos::CYAN);
+                    gfx.gotoxy(40 + prompt.length(), 8 + i);
                     getline(cin, nombre);
 
                     if (nombre.empty()) {
-                        cout << "El nombre no puede estar vacio.\n";
+                        gfx.texto("El nombre no puede estar vacio.                    ", 35, 8 + cantidadJugadores + 3, Graficos::ROJO);
+                        this_thread::sleep_for(chrono::seconds(1));
+                        gfx.texto("                                                   ", 35, 8 + cantidadJugadores + 3, Graficos::ROJO);
                     }
                     else if (nombresUnicos.find(nombre) != nombresUnicos.end()) {
-                        cout << "Ese nombre ya fue usado. Ingrese otro.\n";
+                        gfx.texto("Ese nombre ya fue usado. Ingrese otro.             ", 35, 8 + cantidadJugadores + 3, Graficos::ROJO);
+                        this_thread::sleep_for(chrono::seconds(1));
+                        gfx.texto("                                                   ", 35, 8 + cantidadJugadores + 3, Graficos::ROJO);
                     }
                     else {
                         nombreValido = true;
@@ -219,7 +256,7 @@ void menuModosJuego() {
                 }
             }
 
-            cout << "\n¡Torneo configurado! Presiona Enter para comenzar...";
+            gfx.textoCentrado("¡Torneo configurado! Presiona Enter para comenzar...", 25, Graficos::VERDE);
             cin.ignore();
 
             Jugador temp1("temp1", 'a');
@@ -227,75 +264,82 @@ void menuModosJuego() {
             Juego juego(temp1, temp2, 3);
             juego.modoTorneo(nombresJugadores);
 
-            cout << "\nPresione Enter para volver al menu...";
+            gfx.textoCentrado("Presione Enter para volver al menu...", 27, Graficos::BLANCO);
             cin.ignore();
             break;
         }
 
         case 5:
-            system("cls");
-            cout << "\n=== PROXIMAMENTE ===\n";
-            cout << "Este modo de juego estara disponible pronto.\n";
-            cout << "\nPresione Enter para volver...";
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::GRIS_OSCURO);
+            gfx.textoCentrado("=== PROXIMAMENTE ===", 13, Graficos::AMARILLO);
+            gfx.textoCentrado("Este modo de juego estara disponible pronto.", 15, Graficos::BLANCO);
+            gfx.mostrarCursor();
+            gfx.textoCentrado("Presione Enter para volver...", 20, Graficos::BLANCO);
             cin.ignore();
             break;
 
         case 6:
-            // Volver al menú principal
             break;
 
         default:
-            cout << "Opcion invalida. Intente de nuevo.\n";
+            gfx.textoCentrado("Opcion invalida. Intente de nuevo.", 25, Graficos::ROJO);
             this_thread::sleep_for(chrono::seconds(2));
             break;
         }
     } while (opcion != 6);
 }
 
-// Función del menú principal
+// Función del menú principal - MEJORADA CON GRÁFICOS
 void menuPrincipal() {
+    Graficos gfx; // Crear objeto de gráficos local
     ContenedorJugadores contenedor("jugadores.json");
     int opcion = 0;
 
     do {
-        system("cls");
-        cout << "=============================\n";
-        cout << "     DUELO DE REFLEJOS    \n";
-        cout << "=============================\n";
-        cout << "1. Jugar\n";
-        cout << "2. Ver ranking\n";
-        cout << "3. Modificar estadisticas\n";
-        cout << "4. Eliminar jugador\n";
-        cout << "5. Resetear todo\n";
-        cout << "6. Salir\n";
-        cout << "=============================\n";
-        cout << "Seleccione una opcion: ";
+        gfx.dibujarTitulo();
+
+        gfx.texto("1. Jugar", 48, 22, Graficos::VERDE);
+        gfx.texto("2. Ver ranking", 48, 23, Graficos::CYAN);
+        gfx.texto("3. Modificar estadisticas", 48, 24, Graficos::AMARILLO);
+        gfx.texto("4. Eliminar jugador", 48, 25, Graficos::ROJO);
+        gfx.texto("5. Resetear todo", 48, 26, Graficos::MAGENTA);
+        gfx.texto("6. Salir", 48, 27, Graficos::GRIS_CLARO);
+
+        gfx.mostrarCursor();
+        gfx.texto("Seleccione una opcion: ", 42, 29, Graficos::BLANCO);
+        gfx.gotoxy(66, 29);
 
         opcion = leerOpcionSegura(1, 6);
 
         switch (opcion) {
         case 1: {
-            // Llamar al submenú de modos de juego
             menuModosJuego();
             break;
         }
 
         case 2: {
-            // Submenú de Rankings
             int opcionRanking = 0;
             do {
-                system("cls");
-                cout << "=============================\n";
-                cout << "       VER RANKING         \n";
-                cout << "=============================\n";
-                cout << "1. Duelo Clasico\n";
-                cout << "2. Rondas Multiples\n";
-                cout << "3. Torneos\n";              // AGREGAR
-                cout << "4. Ranking General (Todos los modos)\n";  // CAMBIAR de 3 a 4
-                cout << "5. Volver al menu principal\n";           // CAMBIAR de 4 a 5
-                cout << "=============================\n";
-                cout << "Seleccione una opcion: ";
-                opcionRanking = leerOpcionSegura(1, 5);  // CAMBIAR de 4 a 5
+                gfx.limpiar();
+                gfx.ocultarCursor();
+                gfx.rellenarArea(0, 0, 120, 30, Graficos::VERDE_OSCURO);
+
+                gfx.textoCentrado("????????????????????????????????????????????", 6, Graficos::AMARILLO);
+                gfx.textoCentrado("           V E R   R A N K I N G", 8, Graficos::AMARILLO);
+                gfx.textoCentrado("????????????????????????????????????????????", 10, Graficos::AMARILLO);
+
+                gfx.texto("1. Duelo Clasico", 45, 13, Graficos::CYAN);
+                gfx.texto("2. Rondas Multiples", 45, 15, Graficos::MAGENTA);
+                gfx.texto("3. Torneos", 45, 17, Graficos::ROJO);
+                gfx.texto("4. Ranking General (Todos los modos)", 45, 19, Graficos::AMARILLO);
+                gfx.texto("5. Volver al menu principal", 45, 21, Graficos::GRIS_CLARO);
+
+                gfx.mostrarCursor();
+                gfx.texto("Seleccione una opcion: ", 40, 24, Graficos::BLANCO);
+                gfx.gotoxy(64, 24);
+
+                opcionRanking = leerOpcionSegura(1, 5);
 
                 system("cls");
                 switch (opcionRanking) {
@@ -310,78 +354,94 @@ void menuPrincipal() {
                     cin.ignore();
                     break;
                 case 3:
-                    contenedor.cargarDatosPorModo("torneo");  // NUEVO
+                    contenedor.cargarDatosPorModo("torneo");
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 4:  // CAMBIAR de 3 a 4
+                case 4:
                     contenedor.cargarDatos();
                     cout << "\nPresione Enter para volver...";
                     cin.ignore();
                     break;
-                case 5:  // CAMBIAR de 4 a 5
+                case 5:
                     break;
                 default:
                     cout << "Opcion invalida.\n";
                     this_thread::sleep_for(chrono::seconds(1));
                 }
-            } while (opcionRanking != 5);  // CAMBIAR de 4 a 5
+            } while (opcionRanking != 5);
             break;
         }
 
         case 3: {
-            system("cls");
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::AMARILLO_OSCURO);
+            gfx.textoCentrado("=== MODIFICAR ESTADISTICAS ===", 8, Graficos::AMARILLO);
+
             string nombre;
             int subOpcion;
 
-            cout << "Ingrese el nombre del jugador: ";
+            gfx.mostrarCursor();
+            gfx.texto("Ingrese el nombre del jugador: ", 35, 11, Graficos::BLANCO);
+            gfx.gotoxy(67, 11);
             getline(cin, nombre);
 
-            cout << "\nQue desea modificar?\n";
-            cout << "1. Victorias\n";
-            cout << "2. Partidas\n";
-            cout << "3. Mejor tiempo\n";
-            cout << "Opcion: ";
+            gfx.texto("Que desea modificar?", 35, 14, Graficos::BLANCO);
+            gfx.texto("1. Victorias", 40, 15, Graficos::VERDE);
+            gfx.texto("2. Partidas", 40, 16, Graficos::CYAN);
+            gfx.texto("3. Mejor tiempo", 40, 17, Graficos::MAGENTA);
+            gfx.texto("Opcion: ", 40, 19, Graficos::BLANCO);
+            gfx.gotoxy(49, 19);
 
             subOpcion = leerOpcionSegura(1, 3);
 
             if (subOpcion == 1) {
                 int victorias;
-                cout << "Nuevas victorias: ";
+                gfx.texto("Nuevas victorias: ", 40, 21, Graficos::BLANCO);
+                gfx.gotoxy(59, 21);
                 victorias = leerOpcionSegura(0, 9999);
                 contenedor.modificarVictorias(nombre, victorias);
             }
             else if (subOpcion == 2) {
                 int partidas;
-                cout << "Nuevas partidas: ";
+                gfx.texto("Nuevas partidas: ", 40, 21, Graficos::BLANCO);
+                gfx.gotoxy(58, 21);
                 partidas = leerOpcionSegura(0, 9999);
                 contenedor.modificarPartidas(nombre, partidas);
             }
             else if (subOpcion == 3) {
                 float tiempo;
-                cout << "Nuevo mejor tiempo: ";
+                gfx.texto("Nuevo mejor tiempo: ", 40, 21, Graficos::BLANCO);
+                gfx.gotoxy(61, 21);
                 while (!(cin >> tiempo) || tiempo < 0) {
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Ingrese un tiempo valido (mayor o igual a 0): ";
+                    gfx.texto("Ingrese un tiempo valido (mayor o igual a 0): ", 35, 23, Graficos::ROJO);
+                    gfx.gotoxy(82, 23);
                 }
                 cin.ignore();
                 contenedor.modificarMejorTiempo(nombre, tiempo);
             }
 
-            cout << "\nPresione Enter para volver al menu...";
+            gfx.textoCentrado("Presione Enter para volver al menu...", 26, Graficos::BLANCO);
             cin.ignore();
             break;
         }
 
         case 4: {
-            system("cls");
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::ROJO_OSCURO);
+            gfx.textoCentrado("=== ELIMINAR JUGADOR ===", 10, Graficos::AMARILLO);
+
             string nombre;
-            cout << "Ingrese el nombre del jugador a eliminar: ";
+            gfx.mostrarCursor();
+            gfx.texto("Ingrese el nombre del jugador a eliminar: ", 30, 13, Graficos::BLANCO);
+            gfx.gotoxy(73, 13);
             getline(cin, nombre);
 
             char confirmacion;
-            cout << "Esta seguro? (s/n): ";
+            gfx.texto("Esta seguro? (s/n): ", 40, 16, Graficos::ROJO);
+            gfx.gotoxy(61, 16);
             cin >> confirmacion;
             cin.ignore();
 
@@ -389,19 +449,24 @@ void menuPrincipal() {
                 contenedor.eliminarJugador(nombre);
             }
             else {
-                cout << "Operacion cancelada.\n";
+                gfx.textoCentrado("Operacion cancelada.", 19, Graficos::AMARILLO);
             }
 
-            cout << "\nPresione Enter para volver al menu...";
+            gfx.textoCentrado("Presione Enter para volver al menu...", 25, Graficos::BLANCO);
             cin.ignore();
             break;
         }
 
         case 5: {
-            system("cls");
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::MAGENTA_OSCURO);
+            gfx.textoCentrado("=== RESETEAR ESTADISTICAS ===", 10, Graficos::AMARILLO);
+
             char confirmacion;
-            cout << "ADVERTENCIA: Se borraran TODAS las estadisticas!\n";
-            cout << "Esta seguro? (s/n): ";
+            gfx.textoCentrado("ADVERTENCIA: Se borraran TODAS las estadisticas!", 13, Graficos::ROJO);
+            gfx.mostrarCursor();
+            gfx.texto("Esta seguro? (s/n): ", 45, 16, Graficos::BLANCO);
+            gfx.gotoxy(66, 16);
             cin >> confirmacion;
             cin.ignore();
 
@@ -409,24 +474,30 @@ void menuPrincipal() {
                 contenedor.resetearEstadisticas();
             }
             else {
-                cout << "Operacion cancelada.\n";
+                gfx.textoCentrado("Operacion cancelada.", 19, Graficos::VERDE);
             }
 
-            cout << "\nPresione Enter para volver al menu...";
+            gfx.textoCentrado("Presione Enter para volver al menu...", 24, Graficos::BLANCO);
             cin.ignore();
             break;
         }
 
         case 6:
-            cout << "\nSaliendo del juego... Hasta pronto!\n";
+            gfx.limpiar();
+            gfx.rellenarArea(0, 0, 120, 30, Graficos::NEGRO);
+            gfx.textoCentrado("Saliendo del juego... Hasta pronto!", 14, Graficos::AMARILLO);
+            this_thread::sleep_for(chrono::seconds(2));
             break;
 
         default:
-            cout << "Opcion invalida. Intente de nuevo.\n";
+            gfx.textoCentrado("Opcion invalida. Intente de nuevo.", 29, Graficos::ROJO);
             this_thread::sleep_for(chrono::seconds(2));
             break;
         }
     } while (opcion != 6);
+
+    gfx.resetColor();
+    gfx.mostrarCursor();
 }
 
 // Función principal
