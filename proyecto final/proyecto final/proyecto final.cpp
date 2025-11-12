@@ -10,7 +10,7 @@ int leerOpcionSegura(int min, int max) {
     int opcion;
     while (true) {
         if (cin >> opcion) {
-            cin.ignore();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             if (opcion >= min && opcion <= max) {
                 return opcion;
             }
@@ -39,6 +39,19 @@ bool validarNombres(string& nombre1, string& nombre2) {
     }
 
     return true;
+}
+
+// Función para limpiar el buffer de entrada
+void limpiarBuffer() {
+    if (cin.rdbuf()->in_avail() > 0) {
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+// Función para esperar Enter
+void esperarEnter() {
+    cout << "\nPresione Enter para continuar...";
+    cin.get();
 }
 
 // Función para el submenú de modos de juego
@@ -81,8 +94,7 @@ void menuModosJuego() {
             Juego juego(j1, j2, 3);
             juego.modoDueloClasico();
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -123,8 +135,7 @@ void menuModosJuego() {
             Juego juego(j1, j2, 3);
             juego.modoRondasMultiples(rondasTotal);
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -166,8 +177,7 @@ void menuModosJuego() {
             Juego juego(jugador, jugador, 3);
             juego.modoPractica(jugador, intentosTotal);
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -221,15 +231,14 @@ void menuModosJuego() {
             }
 
             cout << "\n¡Torneo configurado! Presiona Enter para comenzar...";
-            cin.ignore();
+            cin.get();
 
             Jugador temp1("temp1", 'a');
             Jugador temp2("temp2", 'l');
             Juego juego(temp1, temp2, 3);
             juego.modoTorneo(nombresJugadores);
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -272,8 +281,7 @@ void menuModosJuego() {
             Juego juego(jugador, jugador, 3);
             juego.modoDesafioVelocidad(jugador, rondasTotal);
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -340,28 +348,23 @@ void menuPrincipal() {
                 switch (opcionRanking) {
                 case 1:
                     contenedor.cargarDatosPorModo("clasico");
-                    cout << "\nPresione Enter para volver...";
-                    cin.ignore();
+                    esperarEnter();
                     break;
                 case 2:
                     contenedor.cargarDatosPorModo("rondas");
-                    cout << "\nPresione Enter para volver...";
-                    cin.ignore();
+                    esperarEnter();
                     break;
                 case 3:
                     contenedor.cargarDatosPorModo("torneo");
-                    cout << "\nPresione Enter para volver...";
-                    cin.ignore();
+                    esperarEnter();
                     break;
                 case 4:
                     contenedor.cargarDatosPorModo("velocidad");
-                    cout << "\nPresione Enter para volver...";
-                    cin.ignore();
+                    esperarEnter();
                     break;
                 case 5:
                     contenedor.cargarDatos();
-                    cout << "\nPresione Enter para volver...";
-                    cin.ignore();
+                    esperarEnter();
                     break;
                 case 6:
                     break;
@@ -409,12 +412,11 @@ void menuPrincipal() {
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "Ingrese un tiempo valido (mayor o igual a 0): ";
                 }
-                cin.ignore();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 contenedor.modificarMejorTiempo(nombre, tiempo);
             }
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -427,7 +429,7 @@ void menuPrincipal() {
             char confirmacion;
             cout << "Esta seguro? (s/n): ";
             cin >> confirmacion;
-            cin.ignore();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
             if (confirmacion == 's' || confirmacion == 'S') {
                 contenedor.eliminarJugador(nombre);
@@ -436,8 +438,7 @@ void menuPrincipal() {
                 cout << "Operacion cancelada.\n";
             }
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -447,7 +448,7 @@ void menuPrincipal() {
             cout << "ADVERTENCIA: Se borraran TODAS las estadisticas!\n";
             cout << "Esta seguro? (s/n): ";
             cin >> confirmacion;
-            cin.ignore();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
             if (confirmacion == 's' || confirmacion == 'S') {
                 contenedor.resetearEstadisticas();
@@ -456,8 +457,7 @@ void menuPrincipal() {
                 cout << "Operacion cancelada.\n";
             }
 
-            cout << "\nPresione Enter para volver al menu...";
-            cin.ignore();
+            esperarEnter();
             break;
         }
 
@@ -475,7 +475,7 @@ void menuPrincipal() {
 
 // Función principal
 int main() {
-    srand(time(0));  // Inicializar generador aleatorio para modo velocidad
+    srand(static_cast<unsigned int>(time(0)));  // Inicializar generador aleatorio
     menuPrincipal();
     return 0;
 }

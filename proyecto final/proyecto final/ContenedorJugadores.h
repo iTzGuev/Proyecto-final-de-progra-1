@@ -2,7 +2,7 @@
 #include "Librerias.h"
 #include "Jugador.h"
 
-// Clase ContenedorJugadores con soporte JSON
+// Clase ContenedorJugadores con soporte JSON mejorado
 class ContenedorJugadores {
 private:
     string nombreArchivo;
@@ -31,7 +31,7 @@ private:
     void inicializarJSON() {
         datos = {
             {"juego", "Duelo de Reflejos"},
-            {"version", "1.0"},
+            {"version", "2.0"},
             {"jugadores", json::array()}
         };
     }
@@ -103,6 +103,84 @@ private:
         }
     }
 
+    // Obtener encabezado según modo
+    string obtenerEncabezadoModo(const string& modo) {
+        if (modo == "clasico") return "DUELO CLASICO";
+        else if (modo == "rondas") return "RONDAS MULTIPLES";
+        else if (modo == "torneo") return "TORNEOS";
+        else if (modo == "velocidad") return "DESAFIO DE VELOCIDAD";
+        else if (modo == "practica") return "MODO PRACTICA";
+        return "RANKING GENERAL";
+    }
+
+    // Mostrar estadísticas según el modo
+    void mostrarEstadisticasPorModo(const json& jugador, const string& modo, int posicion) {
+        string nombre = jugador["nombre"].get<string>();
+        int victorias = jugador["victorias"].get<int>();
+        int partidas = jugador["partidas"].get<int>();
+        float mejorTiempo = jugador["mejor_tiempo"].get<float>();
+
+        // Línea con número de posición y nombre
+        cout << " " << posicion << ". " << nombre;
+
+        int espacios = 25 - nombre.length() - to_string(posicion).length();
+        for (int k = 0; k < espacios; k++) cout << " ";
+
+        // Mostrar estadísticas según el modo
+        if (modo == "velocidad") {
+            // Modo velocidad: mostrar puntuación y rondas
+            cout << "| Puntuacion: " << setw(5) << victorias
+                << " | Rondas: " << setw(3) << partidas;
+        }
+        else if (modo == "torneo") {
+            // Modo torneo: mostrar campeonatos ganados
+            cout << "| Campeonatos: " << setw(3) << victorias
+                << " | Torneos: " << setw(3) << partidas;
+        }
+        else if (modo == "practica") {
+            // Modo práctica: solo mejor tiempo
+            cout << "| Intentos: " << setw(4) << partidas;
+        }
+        else {
+            // Modos clásico y rondas múltiples: victorias y win%
+            cout << "| Victorias: " << setw(3) << victorias
+                << " | Partidas: " << setw(3) << partidas;
+
+            if (partidas > 0) {
+                double porcentaje = (victorias * 100.0) / partidas;
+                cout << " | Win%: " << fixed << setprecision(1) << setw(5) << porcentaje << "%";
+            }
+            else {
+                cout << " | Win%:   N/A";
+            }
+        }
+
+        cout << "\n";
+
+        // Mostrar mejor tiempo si es válido
+        if (mejorTiempo > 0 && mejorTiempo < 999) {
+            cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s";
+
+            // Agregar calificación del tiempo
+            if (modo == "velocidad") {
+                if (mejorTiempo < 0.15) cout << " [LEGENDARIO]";
+                else if (mejorTiempo < 0.20) cout << " [EXCELENTE]";
+                else if (mejorTiempo < 0.30) cout << " [MUY BUENO]";
+                else if (mejorTiempo < 0.40) cout << " [BUENO]";
+            }
+            else {
+                if (mejorTiempo < 0.20) cout << " [ELITE]";
+                else if (mejorTiempo < 0.30) cout << " [EXPERTO]";
+                else if (mejorTiempo < 0.40) cout << " [AVANZADO]";
+                else if (mejorTiempo < 0.50) cout << " [INTERMEDIO]";
+            }
+            cout << "\n";
+        }
+        else {
+            cout << "   Mejor tiempo: N/A\n";
+        }
+    }
+
 public:
     ContenedorJugadores(string archivo = "jugadores.json") : nombreArchivo(archivo) {
         cargarJSON();
@@ -113,13 +191,16 @@ public:
         cargarJSON();
 
         actualizarJugadorConModo(j1);
-        actualizarJugadorConModo(j2);
+        // Solo actualizar j2 si tiene un nombre válido (no es dummy)
+        if (!j2.getNombre().empty()) {
+            actualizarJugadorConModo(j2);
+        }
 
         guardarJSON();
         cout << "\nDatos guardados correctamente en " << nombreArchivo << endl;
     }
 
-    // Mostrar historial completo (ranking)
+    // Mostrar historial completo (ranking general) - CORREGIDO PARA C++14
     void cargarDatos() {
         cargarJSON();
 
@@ -130,50 +211,142 @@ public:
         }
 
         cout << "\n===============================================================\n";
-        cout << "              ** HISTORIAL DE JUGADORES **                    \n";
+        cout << "              ** RANKING GENERAL **                    \n";
+        cout << "       (Victorias reales en duelos/torneos)                    \n";
         cout << "===============================================================\n";
 
-        json jugadoresOrdenados = datos["jugadores"];
-        for (size_t i = 0; i < jugadoresOrdenados.size(); i++) {
-            for (size_t j = i + 1; j < jugadoresOrdenados.size(); j++) {
-                if (jugadoresOrdenados[i]["victorias"].get<int>() < jugadoresOrdenados[j]["victorias"].get<int>()) {
-                    swap(jugadoresOrdenados[i], jugadoresOrdenados[j]);
-                }
+        // Estructura para estadísticas globales
+        struct EstadisticasGlobales {
+            int victoriasReales;
+            int partidasReales;
+            int campeonatos;
+            int torneosJugados;
+            int puntuacionVelocidad;
+            int rondasVelocidad;
+            float mejorTiempo;
+        };
+
+        map<string, EstadisticasGlobales> estadisticasGlobales;
+
+        // Recopilar estadísticas separadas por modo
+        for (const auto& jugador : datos["jugadores"]) {
+            string nombre = jugador["nombre"].get<string>();
+            string modo = jugador["modo_juego"].get<string>();
+            int victorias = jugador["victorias"].get<int>();
+            int partidas = jugador["partidas"].get<int>();
+            float tiempo = jugador["mejor_tiempo"].get<float>();
+
+            // Inicializar si es nuevo
+            if (estadisticasGlobales.find(nombre) == estadisticasGlobales.end()) {
+                EstadisticasGlobales temp = { 0, 0, 0, 0, 0, 0, 999.9f };
+                estadisticasGlobales[nombre] = temp;
+            }
+
+            EstadisticasGlobales& stats = estadisticasGlobales[nombre];
+
+            // Separar según modo
+            if (modo == "clasico" || modo == "rondas") {
+                stats.victoriasReales += victorias;
+                stats.partidasReales += partidas;
+            }
+            else if (modo == "torneo") {
+                stats.campeonatos += victorias;
+                stats.torneosJugados += partidas;
+            }
+            else if (modo == "velocidad") {
+                stats.puntuacionVelocidad += victorias;
+                stats.rondasVelocidad += partidas;
+            }
+
+            // Actualizar mejor tiempo
+            if (tiempo > 0 && tiempo < 999 && tiempo < stats.mejorTiempo) {
+                stats.mejorTiempo = tiempo;
             }
         }
 
-        for (size_t i = 0; i < jugadoresOrdenados.size(); i++) {
-            auto jugador = jugadoresOrdenados[i];
-            string nombre = jugador["nombre"].get<string>();
-            int victorias = jugador["victorias"].get<int>();
-            int partidas = jugador["partidas"].get<int>();
-            float mejorTiempo = jugador["mejor_tiempo"].get<float>();
+        // Convertir a vector para ordenar
+        vector<pair<string, EstadisticasGlobales>> ranking;
+        for (map<string, EstadisticasGlobales>::iterator it = estadisticasGlobales.begin();
+            it != estadisticasGlobales.end(); ++it) {
+            ranking.push_back(*it);
+        }
+
+        // Ordenar por victorias reales, luego por campeonatos
+        sort(ranking.begin(), ranking.end(),
+            [](const pair<string, EstadisticasGlobales>& a, const pair<string, EstadisticasGlobales>& b) {
+                int totalA = a.second.victoriasReales + a.second.campeonatos;
+                int totalB = b.second.victoriasReales + b.second.campeonatos;
+
+                if (totalA != totalB) return totalA > totalB;
+                return a.second.victoriasReales > b.second.victoriasReales;
+            });
+
+        // Mostrar ranking
+        for (size_t i = 0; i < ranking.size(); i++) {
+            string nombre = ranking[i].first;
+            EstadisticasGlobales stats = ranking[i].second;
 
             cout << " " << (i + 1) << ". " << nombre;
 
             int espacios = 25 - nombre.length() - to_string(i + 1).length();
             for (int k = 0; k < espacios; k++) cout << " ";
 
-            cout << "| Victorias: " << victorias
-                << " | Partidas: " << partidas;
+            int victoriasTotal = stats.victoriasReales + stats.campeonatos;
+            cout << "| Total: " << setw(3) << victoriasTotal << " victorias\n";
 
-            if (partidas > 0) {
-                double porcentaje = (victorias * 100.0) / partidas;
-                cout << " | Win%: " << fixed << setprecision(1) << porcentaje << "%";
+            // Desglose detallado
+            if (stats.victoriasReales > 0 || stats.partidasReales > 0) {
+                cout << "   Duelos: " << stats.victoriasReales << " victorias / "
+                    << stats.partidasReales << " partidas";
+                if (stats.partidasReales > 0) {
+                    double porcentaje = (stats.victoriasReales * 100.0) / stats.partidasReales;
+                    cout << " (" << fixed << setprecision(1) << porcentaje << "%)";
+                }
+                cout << "\n";
             }
 
-            cout << "\n";
+            if (stats.campeonatos > 0) {
+                cout << "   Torneos: " << stats.campeonatos << " campeonatos ganados / "
+                    << stats.torneosJugados << " torneos\n";
+            }
 
-            if (mejorTiempo > 0 && mejorTiempo < 999) {
-                cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+            if (stats.puntuacionVelocidad > 0) {
+                cout << "   Velocidad: " << stats.puntuacionVelocidad << " puntos / "
+                    << stats.rondasVelocidad << " rondas\n";
             }
-            else {
-                cout << "   Mejor tiempo: N/A\n";
+
+            // Mejor tiempo global
+            if (stats.mejorTiempo < 999) {
+                cout << "   Mejor tiempo: " << fixed << setprecision(4) << stats.mejorTiempo << "s";
+
+                if (stats.mejorTiempo < 0.20) cout << " [ELITE]";
+                else if (stats.mejorTiempo < 0.30) cout << " [EXPERTO]";
+                else if (stats.mejorTiempo < 0.40) cout << " [AVANZADO]";
+                else if (stats.mejorTiempo < 0.50) cout << " [INTERMEDIO]";
+
+                cout << "\n";
             }
+
             cout << "---------------------------------------------------------------\n";
         }
 
         cout << "===============================================================\n";
+
+        // Mostrar resumen general
+        int totalVictorias = 0;
+        int totalCampeonatos = 0;
+        int totalPuntos = 0;
+
+        for (size_t i = 0; i < ranking.size(); i++) {
+            totalVictorias += ranking[i].second.victoriasReales;
+            totalCampeonatos += ranking[i].second.campeonatos;
+            totalPuntos += ranking[i].second.puntuacionVelocidad;
+        }
+
+        cout << "\nResumen del servidor:\n";
+        cout << "- Total victorias en duelos: " << totalVictorias << "\n";
+        cout << "- Total campeonatos ganados: " << totalCampeonatos << "\n";
+        cout << "- Total puntos en velocidad: " << totalPuntos << "\n";
     }
 
     // Mostrar ranking filtrado por modo de juego
@@ -188,71 +361,65 @@ public:
         }
 
         if (jugadoresFiltrados.empty()) {
-            cout << "\n=== RANKING: ";
-            if (modo == "clasico") cout << "DUELO CLASICO";
-            else if (modo == "rondas") cout << "RONDAS MULTIPLES";
-            else if (modo == "torneo") cout << "TORNEOS";
-            else if (modo == "velocidad") cout << "DESAFIO DE VELOCIDAD";
-            cout << " ===\n";
+            cout << "\n=== RANKING: " << obtenerEncabezadoModo(modo) << " ===\n";
             cout << "No hay jugadores registrados en este modo aun.\n";
             return;
         }
 
         cout << "\n===============================================================\n";
-        cout << "              ** RANKING: ";
-        if (modo == "clasico") cout << "DUELO CLASICO";
-        else if (modo == "rondas") cout << "RONDAS MULTIPLES";
-        else if (modo == "torneo") cout << "TORNEOS";
-        else if (modo == "velocidad") cout << "DESAFIO DE VELOCIDAD";
-        cout << " **                    \n";
+        cout << "              ** RANKING: " << obtenerEncabezadoModo(modo) << " **\n";
         cout << "===============================================================\n";
 
-        for (size_t i = 0; i < jugadoresFiltrados.size(); i++) {
-            for (size_t j = i + 1; j < jugadoresFiltrados.size(); j++) {
-                if (jugadoresFiltrados[i]["victorias"].get<int>() < jugadoresFiltrados[j]["victorias"].get<int>()) {
-                    swap(jugadoresFiltrados[i], jugadoresFiltrados[j]);
-                }
-            }
+        // Ordenar según el criterio del modo
+        if (modo == "velocidad") {
+            sort(jugadoresFiltrados.begin(), jugadoresFiltrados.end(),
+                [](const json& a, const json& b) {
+                    return a["victorias"].get<int>() > b["victorias"].get<int>();
+                });
+        }
+        else if (modo == "torneo") {
+            sort(jugadoresFiltrados.begin(), jugadoresFiltrados.end(),
+                [](const json& a, const json& b) {
+                    return a["victorias"].get<int>() > b["victorias"].get<int>();
+                });
+        }
+        else {
+            sort(jugadoresFiltrados.begin(), jugadoresFiltrados.end(),
+                [](const json& a, const json& b) {
+                    int victA = a["victorias"].get<int>();
+                    int victB = b["victorias"].get<int>();
+                    if (victA != victB) return victA > victB;
+
+                    int partA = a["partidas"].get<int>();
+                    int partB = b["partidas"].get<int>();
+                    if (partA == 0) return false;
+                    if (partB == 0) return true;
+
+                    double winA = (victA * 100.0) / partA;
+                    double winB = (victB * 100.0) / partB;
+                    return winA > winB;
+                });
         }
 
+        // Mostrar jugadores ordenados
         for (size_t i = 0; i < jugadoresFiltrados.size(); i++) {
-            auto jugador = jugadoresFiltrados[i];
-            string nombre = jugador["nombre"].get<string>();
-            int victorias = jugador["victorias"].get<int>();
-            int partidas = jugador["partidas"].get<int>();
-            float mejorTiempo = jugador["mejor_tiempo"].get<float>();
-
-            cout << " " << (i + 1) << ". " << nombre;
-
-            int espacios = 25 - nombre.length() - to_string(i + 1).length();
-            for (int k = 0; k < espacios; k++) cout << " ";
-
-            if (modo == "velocidad") {
-                cout << "| Puntuacion: " << victorias;
-                cout << " | Rondas: " << partidas;
-            }
-            else {
-                cout << "| Victorias: " << victorias
-                    << " | Partidas: " << partidas;
-
-                if (partidas > 0) {
-                    double porcentaje = (victorias * 100.0) / partidas;
-                    cout << " | Win%: " << fixed << setprecision(1) << porcentaje << "%";
-                }
-            }
-
-            cout << "\n";
-
-            if (mejorTiempo > 0 && mejorTiempo < 999) {
-                cout << "   Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
-            }
-            else {
-                cout << "   Mejor tiempo: N/A\n";
-            }
+            mostrarEstadisticasPorModo(jugadoresFiltrados[i], modo, i + 1);
             cout << "---------------------------------------------------------------\n";
         }
 
         cout << "===============================================================\n";
+
+        // Mostrar estadísticas adicionales del modo
+        if (modo == "velocidad") {
+            int puntuacionTotal = 0;
+            for (const auto& j : jugadoresFiltrados) {
+                puntuacionTotal += j["victorias"].get<int>();
+            }
+            cout << "\nPuntuacion total acumulada: " << puntuacionTotal << " puntos\n";
+        }
+        else if (modo == "torneo") {
+            cout << "\nTotal de torneos completados: " << jugadoresFiltrados.size() << "\n";
+        }
     }
 
     // Modificar victorias de un jugador
