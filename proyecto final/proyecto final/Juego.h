@@ -3,9 +3,9 @@
 #include "Jugador.h"
 #include "ContenedorJugadores.h"
 #include "Tempo.h"
-#include "Graficos.h"  // ← NUEVO
+#include "Animaciones.h"
 
-// Clase Juego con diferentes modos - MEJORADA CON GRÁFICOS
+// Clase Juego con diferentes modos
 class Juego {
 private:
     Jugador jugador1;
@@ -14,48 +14,46 @@ private:
     bool enCurso;
     Temporizador temporizador;
     ContenedorJugadores contenedor;
-    Graficos gfx;  // ← NUEVO: Objeto de gráficos
 
-    // Método privado para ejecutar una sola ronda - MEJORADO CON GRÁFICOS
+    // Método privado para ejecutar una sola ronda CON ANIMACIONES
     void ejecutarRonda() {
-        gfx.limpiar();
-        gfx.ocultarCursor();
+        // Mostrar pantalla inicial con ambas pistolas
+        system("cls");
+        cout << "\n=== DUELO DE REFLEJOS ===\n";
+        Animaciones::mostrarAmbasPistolas(
+            jugador1.getNombre(),
+            jugador2.getNombre(),
+            jugador1.getTecla(),
+            jugador2.getTecla()
+        );
 
-        // Dibujar fondo y título del duelo
-        gfx.rellenarArea(0, 0, 120, 30, Graficos::AZUL_OSCURO);
-        gfx.textoCentrado("════════════════════════════════════════════", 2, Graficos::AMARILLO);
-        gfx.textoCentrado("          D U E L O   D E   R E F L E J O S", 3, Graficos::AMARILLO);
-        gfx.textoCentrado("════════════════════════════════════════════", 4, Graficos::AMARILLO);
+        cout << "\nPresiona Enter cuando estes listo...";
+        cin.ignore();
 
-        // Dibujar jugadores en posiciones opuestas (como vaqueros)
-        gfx.dibujarJugador(jugador1.getNombre(), jugador1.getTecla(), 8, 8, Graficos::CYAN);
-        gfx.dibujarJugador(jugador2.getNombre(), jugador2.getTecla(), 80, 8, Graficos::MAGENTA);
-
-        // VS en el centro
-        gfx.texto("V", 57, 12, Graficos::ROJO);
-        gfx.texto("S", 62, 12, Graficos::ROJO);
-
-        // Mensaje de preparación
-        gfx.textoCentrado("¡ Preparense para el duelo !", 22, Graficos::BLANCO);
-        this_thread::sleep_for(chrono::milliseconds(2000));
+        // Animación de "Preparense"
+        Animaciones::mostrarPreparense();
+        this_thread::sleep_for(chrono::milliseconds(1500));
 
         // Cuenta regresiva animada
-        gfx.animarCuentaRegresiva(tiempoCuentaRegresiva);
+        for (int i = tiempoCuentaRegresiva; i > 0; --i) {
+            Animaciones::mostrarCuentaRegresiva(i);
+            this_thread::sleep_for(chrono::seconds(1));
+        }
 
-        // Pantalla de DISPARA con efecto
-        gfx.mostrarDispara();
+        // Mostrar "¡DISPAREN!"
+        Animaciones::mostrarDisparen();
+
+        // Mostrar pistolas en posición
+        Animaciones::mostrarAmbasPistolas(
+            jugador1.getNombre(),
+            jugador2.getNombre(),
+            jugador1.getTecla(),
+            jugador2.getTecla()
+        );
 
         temporizador.iniciar();
         bool jugador1Listo = false;
         bool jugador2Listo = false;
-
-        // Redibujar jugadores en modo "esperando disparo"
-        gfx.limpiar();
-        gfx.rellenarArea(0, 0, 120, 30, Graficos::ROJO_OSCURO);
-        gfx.textoCentrado("¡¡¡ D I S P A R E N !!!", 2, Graficos::AMARILLO);
-
-        gfx.dibujarJugador(jugador1.getNombre(), jugador1.getTecla(), 8, 8, Graficos::CYAN, false);
-        gfx.dibujarJugador(jugador2.getNombre(), jugador2.getTecla(), 80, 8, Graficos::MAGENTA, false);
 
         while (!jugador1Listo || !jugador2Listo) {
             if (_kbhit()) {
@@ -67,28 +65,45 @@ private:
                     jugador1.registrarTiempo(tiempo);
                     jugador1Listo = true;
 
-                    // Efecto visual de disparo
-                    gfx.efectoDisparo(24, 12);
-                    gfx.dibujarJugador(jugador1.getNombre(), jugador1.getTecla(), 8, 8, Graficos::VERDE, true);
+                    // Mostrar animación de disparo
+                    system("cls");
+                    cout << "\n=== " << jugador1.getNombre() << " DISPARA ===\n";
+                    Animaciones::mostrarDisparoIzquierdo();
+                    cout << "\nTiempo: " << fixed << setprecision(4) << tiempo << " segundos\n";
 
-                    string msg = jugador1.getNombre() + " disparo en " + to_string(tiempo).substr(0, 6) + "s";
-                    gfx.texto(msg, 8, 20, Graficos::VERDE);
+                    if (!jugador2Listo) {
+                        cout << "\nEsperando a " << jugador2.getNombre() << "...\n";
+                    }
                 }
                 else if (tecla == jugador2.getTecla() && !jugador2Listo) {
                     jugador2.registrarTiempo(tiempo);
                     jugador2Listo = true;
 
-                    // Efecto visual de disparo
-                    gfx.efectoDisparo(96, 12);
-                    gfx.dibujarJugador(jugador2.getNombre(), jugador2.getTecla(), 80, 8, Graficos::VERDE, true);
+                    // Si el jugador 1 ya disparó, mostrar ambos
+                    if (jugador1Listo) {
+                        system("cls");
+                        cout << "\n=== AMBOS JUGADORES DISPARARON ===\n";
+                        cout << "\n" << jugador1.getNombre() << ":\n";
+                        Animaciones::mostrarDisparoIzquierdo();
+                        cout << "Tiempo: " << fixed << setprecision(4) << jugador1.getTiempoReaccion() << "s\n";
 
-                    string msg = jugador2.getNombre() + " disparo en " + to_string(tiempo).substr(0, 6) + "s";
-                    gfx.texto(msg, 8, 22, Graficos::VERDE);
+                        cout << "\n" << jugador2.getNombre() << ":\n";
+                        Animaciones::mostrarDisparoDerecho();
+                        cout << "Tiempo: " << fixed << setprecision(4) << tiempo << "s\n";
+                    }
+                    else {
+                        system("cls");
+                        cout << "\n=== " << jugador2.getNombre() << " DISPARA ===\n";
+                        Animaciones::mostrarDisparoDerecho();
+                        cout << "\nTiempo: " << fixed << setprecision(4) << tiempo << " segundos\n";
+                        cout << "\nEsperando a " << jugador1.getNombre() << "...\n";
+                    }
                 }
             }
         }
 
-        this_thread::sleep_for(chrono::milliseconds(2000));
+        // Pequeña pausa antes de mostrar resultado
+        this_thread::sleep_for(chrono::milliseconds(1500));
     }
 
     // Método privado para determinar ganador de una ronda
@@ -101,40 +116,32 @@ private:
         else return 0;
     }
 
-    // Método privado para mostrar resultado final - MEJORADO CON GRÁFICOS
+    // Método privado para mostrar resultado final y guardar CON ANIMACIONES
     void finalizarPartida(int ganador, const string& modo) {
+        // Establecer el modo de juego antes de guardar
         jugador1.setModoJuego(modo);
         jugador2.setModoJuego(modo);
 
         jugador1.incrementarPartidas();
         jugador2.incrementarPartidas();
 
-        string nombreGanador;
         if (ganador == 1) {
-            nombreGanador = jugador1.getNombre();
+            Animaciones::mostrarGanador(jugador1.getNombre(), false);
             jugador1.incrementarVictorias();
         }
         else if (ganador == 2) {
-            nombreGanador = jugador2.getNombre();
+            Animaciones::mostrarGanador(jugador2.getNombre(), false);
             jugador2.incrementarVictorias();
         }
         else {
-            nombreGanador = "EMPATE";
+            Animaciones::mostrarGanador("", true);
         }
 
-        // Mostrar resultado con gráficos
-        gfx.mostrarResultado(
-            nombreGanador,
-            jugador1.getTiempoReaccion(),
-            jugador2.getTiempoReaccion(),
-            jugador1.getNombre(),
-            jugador2.getNombre()
-        );
+        cout << "\n=== ESTADISTICAS ===\n";
+        cout << jugador1.getNombre() << ": " << fixed << setprecision(4) << jugador1.getTiempoReaccion() << "s\n";
+        cout << jugador2.getNombre() << ": " << fixed << setprecision(4) << jugador2.getTiempoReaccion() << "s\n";
 
         contenedor.guardarDatos(jugador1, jugador2);
-
-        gfx.mostrarCursor();
-        gfx.textoCentrado("Presiona Enter para continuar...", 27, Graficos::BLANCO);
     }
 
 public:
@@ -142,7 +149,7 @@ public:
         : jugador1(j1), jugador2(j2), tiempoCuentaRegresiva(cuenta), enCurso(false) {
     }
 
-    // MODO 1: Duelo Clásico - MEJORADO CON GRÁFICOS
+    // MODO 1: Duelo Clásico (una sola ronda)
     void modoDueloClasico() {
         bool quiereJugar = true;
 
@@ -153,31 +160,29 @@ public:
             int ganador = determinarGanadorRonda();
             finalizarPartida(ganador, "clasico");
 
-            // Preguntar si quieren volver a jugar
             char respuesta;
+            cout << "\n¿Quieren jugar otra vez? (s/n): ";
             cin >> respuesta;
             cin.ignore();
 
-            if (respuesta == 's' || respuesta == 'S' || respuesta == '\n' || respuesta == '\r') {
-                // Resetear para nueva partida
+            if (respuesta == 's' || respuesta == 'S') {
                 jugador1.registrarTiempo(0);
                 jugador2.registrarTiempo(0);
                 jugador1.setVictorias(0);
                 jugador1.setPartidas(0);
                 jugador2.setVictorias(0);
                 jugador2.setPartidas(0);
+                system("cls");
             }
             else {
                 quiereJugar = false;
             }
         }
 
-        gfx.mostrarCursor();
-        gfx.resetColor();
         enCurso = false;
     }
 
-    // MODO 2: Rondas Múltiples - MEJORADO CON GRÁFICOS
+    // MODO 2: Rondas Múltiples (mejor de X)
     void modoRondasMultiples(int totalRondas) {
         enCurso = true;
         int victoriasJ1 = 0;
@@ -192,43 +197,29 @@ public:
                 break;
             }
 
-            // Pantalla de información de ronda con gráficos
-            gfx.limpiar();
-            gfx.ocultarCursor();
-            gfx.rellenarArea(0, 0, 120, 30, Graficos::MAGENTA_OSCURO);
-
-            gfx.textoCentrado("════════════════════════════════════════════", 8, Graficos::AMARILLO);
-            string textoRonda = "RONDA " + to_string(ronda) + " DE " + to_string(totalRondas);
-            gfx.textoCentrado(textoRonda, 10, Graficos::AMARILLO);
-            gfx.textoCentrado("════════════════════════════════════════════", 12, Graficos::AMARILLO);
-
-            // Mostrar victorias con barras
-            gfx.dibujarBarraVictorias(30, 15, jugador1.getNombre(), victoriasJ1, rondasNecesarias, Graficos::CYAN);
-            gfx.dibujarBarraVictorias(30, 17, jugador2.getNombre(), victoriasJ2, rondasNecesarias, Graficos::MAGENTA);
-
-            gfx.mostrarCursor();
-            gfx.textoCentrado("Presiona Enter para comenzar...", 22, Graficos::BLANCO);
-            cin.ignore();
+            system("cls");
+            cout << "\n========================================\n";
+            cout << "         RONDA " << ronda << " DE " << totalRondas << "\n";
+            cout << "========================================\n";
+            cout << jugador1.getNombre() << ": " << victoriasJ1 << " victorias\n";
+            cout << jugador2.getNombre() << ": " << victoriasJ2 << " victorias\n";
+            cout << "========================================\n\n";
 
             ejecutarRonda();
 
             int ganadorRonda = determinarGanadorRonda();
 
-            // Mostrar ganador de la ronda
-            gfx.limpiar();
-            gfx.rellenarArea(0, 0, 120, 30, Graficos::VERDE_OSCURO);
-            gfx.textoCentrado("--- Resultado de la ronda ---", 10, Graficos::AMARILLO);
-
+            cout << "\n--- Resultado de la ronda ---\n";
             if (ganadorRonda == 1) {
-                gfx.textoCentrado(jugador1.getNombre() + " GANA la ronda!", 13, Graficos::VERDE);
+                cout << jugador1.getNombre() << " GANA la ronda!\n";
                 victoriasJ1++;
             }
             else if (ganadorRonda == 2) {
-                gfx.textoCentrado(jugador2.getNombre() + " GANA la ronda!", 13, Graficos::VERDE);
+                cout << jugador2.getNombre() << " GANA la ronda!\n";
                 victoriasJ2++;
             }
             else {
-                gfx.textoCentrado("¡Empate en esta ronda!", 13, Graficos::CYAN);
+                cout << "¡Empate en esta ronda!\n";
             }
 
             float t1 = jugador1.getTiempoReaccion();
@@ -241,80 +232,75 @@ public:
                 mejorTiempoJ2 = t2;
             }
 
-            gfx.mostrarCursor();
-            gfx.textoCentrado("Presiona Enter para continuar...", 20, Graficos::BLANCO);
+            cout << "\nPresione Enter para continuar...";
             cin.ignore();
         }
 
         if (mejorTiempoJ1 > 0) jugador1.registrarTiempo(mejorTiempoJ1);
         if (mejorTiempoJ2 > 0) jugador2.registrarTiempo(mejorTiempoJ2);
 
-        // Resultado final con gráficos
-        gfx.limpiar();
-        gfx.ocultarCursor();
-        gfx.rellenarArea(0, 0, 120, 30, Graficos::AZUL_OSCURO);
-
-        gfx.textoCentrado("════════════════════════════════════════════", 7, Graficos::AMARILLO);
-        gfx.textoCentrado("        R E S U L T A D O   F I N A L", 9, Graficos::AMARILLO);
-        gfx.textoCentrado("════════════════════════════════════════════", 11, Graficos::AMARILLO);
-
-        gfx.texto(jugador1.getNombre() + ": " + to_string(victoriasJ1) + " rondas ganadas", 35, 14, Graficos::CYAN);
-        gfx.texto(jugador2.getNombre() + ": " + to_string(victoriasJ2) + " rondas ganadas", 35, 16, Graficos::MAGENTA);
+        system("cls");
+        cout << "\n========================================\n";
+        cout << "         RESULTADO FINAL\n";
+        cout << "========================================\n";
+        cout << jugador1.getNombre() << ": " << victoriasJ1 << " rondas ganadas\n";
+        cout << jugador2.getNombre() << ": " << victoriasJ2 << " rondas ganadas\n";
+        cout << "========================================\n\n";
 
         int ganadorFinal = 0;
         if (victoriasJ1 > victoriasJ2) {
-            gfx.textoCentrado("*** " + jugador1.getNombre() + " GANA EL MATCH! ***", 19, Graficos::VERDE);
+            cout << "*** " << jugador1.getNombre() << " GANA EL MATCH! ***\n";
             ganadorFinal = 1;
         }
         else if (victoriasJ2 > victoriasJ1) {
-            gfx.textoCentrado("*** " + jugador2.getNombre() + " GANA EL MATCH! ***", 19, Graficos::VERDE);
+            cout << "*** " << jugador2.getNombre() << " GANA EL MATCH! ***\n";
             ganadorFinal = 2;
         }
         else {
-            gfx.textoCentrado("*** EMPATE PERFECTO! ***", 19, Graficos::CYAN);
+            cout << "*** EMPATE PERFECTO! ***\n";
         }
 
         finalizarPartida(ganadorFinal, "rondas");
-        gfx.mostrarCursor();
         enCurso = false;
     }
 
-    // MODO 3: Modo Práctica - MEJORADO CON GRÁFICOS
+    // MODO 3: Modo Práctica
     void modoPractica(Jugador& jugador, int numeroIntentos = 5) {
         enCurso = true;
         float mejorTiempo = 0;
         float tiempoPromedio = 0;
         int intentosCompletados = 0;
 
-        gfx.pantallaModoPractica(jugador.getNombre(), numeroIntentos);
-        gfx.mostrarCursor();
-        gfx.textoCentrado("Presiona Enter para comenzar...", 22, Graficos::BLANCO);
+        cout << "\n========================================\n";
+        cout << "         MODO PRACTICA\n";
+        cout << "========================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "Intentos: " << numeroIntentos << "\n";
+        cout << "Tecla: [" << jugador.getTecla() << "]\n";
+        cout << "========================================\n";
+        cout << "\nEste modo NO afecta tus estadisticas.\n";
+        cout << "Presiona Enter para comenzar...";
         cin.ignore();
 
         for (int intento = 1; intento <= numeroIntentos; intento++) {
-            gfx.limpiar();
-            gfx.ocultarCursor();
-            gfx.rellenarArea(0, 0, 120, 30, Graficos::CYAN_OSCURO);
-
-            string textoIntento = "INTENTO " + to_string(intento) + " DE " + to_string(numeroIntentos);
-            gfx.textoCentrado("════════════════════════════════════════════", 6, Graficos::AMARILLO);
-            gfx.textoCentrado(textoIntento, 8, Graficos::AMARILLO);
-            gfx.textoCentrado("════════════════════════════════════════════", 10, Graficos::AMARILLO);
+            system("cls");
+            cout << "\n========================================\n";
+            cout << "    INTENTO " << intento << " DE " << numeroIntentos << "\n";
+            cout << "========================================\n";
 
             if (mejorTiempo > 0) {
-                string mejor = "Mejor tiempo: " + to_string(mejorTiempo).substr(0, 6) + "s";
-                gfx.textoCentrado(mejor, 13, Graficos::VERDE);
+                cout << "Mejor tiempo hasta ahora: " << fixed << setprecision(4) << mejorTiempo << "s\n";
             }
 
-            gfx.textoCentrado("Presiona [" + string(1, jugador.getTecla()) + "] cuando veas ¡DISPARA!", 16, Graficos::BLANCO);
-            this_thread::sleep_for(chrono::milliseconds(2000));
+            cout << "\nPresiona [" << jugador.getTecla() << "] cuando veas ¡DISPARA!\n";
+            cout << "\nPreparate...\n";
 
-            // Cuenta regresiva
-            gfx.animarCuentaRegresiva(tiempoCuentaRegresiva);
-
-            gfx.limpiar();
-            gfx.rellenarArea(0, 0, 120, 30, Graficos::ROJO);
-            gfx.textoCentrado("¡ D I S P A R A !", 13, Graficos::AMARILLO);
+            for (int i = tiempoCuentaRegresiva; i > 0; --i) {
+                cout << i << "...\n";
+                this_thread::sleep_for(chrono::seconds(1));
+            }
+            cout << "\n¡DISPARA!\n";
+            Animaciones::mostrarDisparoSimple();
 
             temporizador.iniciar();
             bool teclaPresionada = false;
@@ -331,75 +317,62 @@ public:
                         intentosCompletados++;
                         tiempoPromedio += tiempoReaccion;
 
-                        gfx.limpiar();
-                        gfx.rellenarArea(0, 0, 120, 30, Graficos::VERDE_OSCURO);
-
-                        string msg = "Tiempo de reaccion: " + to_string(tiempoReaccion).substr(0, 6) + "s";
-                        gfx.textoCentrado(msg, 12, Graficos::BLANCO);
+                        cout << "\nTiempo de reaccion: " << fixed << setprecision(4) << tiempoReaccion << " segundos\n";
 
                         if (mejorTiempo == 0 || tiempoReaccion < mejorTiempo) {
                             mejorTiempo = tiempoReaccion;
-                            gfx.textoCentrado("*** ¡NUEVO RECORD PERSONAL! ***", 14, Graficos::AMARILLO);
+                            cout << "*** ¡NUEVO RECORD PERSONAL! ***\n";
                         }
 
-                        // Feedback según el tiempo
                         if (tiempoReaccion < 0.2) {
-                            gfx.textoCentrado("¡INCREIBLE! Reflejos de campeon!", 17, Graficos::VERDE);
+                            cout << "¡INCREIBLE! Reflejos de campeon!\n";
                         }
                         else if (tiempoReaccion < 0.3) {
-                            gfx.textoCentrado("¡Excelente! Muy rapido!", 17, Graficos::VERDE);
+                            cout << "¡Excelente! Muy rapido!\n";
                         }
                         else if (tiempoReaccion < 0.4) {
-                            gfx.textoCentrado("¡Bien! Buen tiempo.", 17, Graficos::CYAN);
+                            cout << "¡Bien! Buen tiempo.\n";
                         }
                         else if (tiempoReaccion < 0.5) {
-                            gfx.textoCentrado("No esta mal, puedes mejorar.", 17, Graficos::AMARILLO);
+                            cout << "No esta mal, puedes mejorar.\n";
                         }
                         else {
-                            gfx.textoCentrado("Necesitas mas practica.", 17, Graficos::ROJO);
+                            cout << "Necesitas mas practica.\n";
                         }
                     }
                     else {
-                        gfx.textoCentrado("Tecla incorrecta. Presiona [" + string(1, jugador.getTecla()) + "]", 19, Graficos::ROJO);
+                        cout << "\nTecla incorrecta. Presiona [" << jugador.getTecla() << "]\n";
                     }
                 }
             }
 
             if (intento < numeroIntentos) {
-                gfx.mostrarCursor();
-                gfx.textoCentrado("Presiona Enter para el siguiente intento...", 23, Graficos::BLANCO);
+                cout << "\nPresiona Enter para el siguiente intento...";
                 cin.ignore();
             }
         }
 
-        // Mostrar resumen final
-        gfx.limpiar();
-        gfx.ocultarCursor();
-        gfx.rellenarArea(0, 0, 120, 30, Graficos::AZUL_OSCURO);
-
-        gfx.textoCentrado("════════════════════════════════════════════", 7, Graficos::AMARILLO);
-        gfx.textoCentrado("      R E S U M E N   D E   P R A C T I C A", 9, Graficos::AMARILLO);
-        gfx.textoCentrado("════════════════════════════════════════════", 11, Graficos::AMARILLO);
-
-        gfx.texto("Jugador: " + jugador.getNombre(), 40, 14, Graficos::BLANCO);
-        gfx.texto("Intentos completados: " + to_string(intentosCompletados), 40, 16, Graficos::BLANCO);
-
-        string mejor = "Mejor tiempo: " + to_string(mejorTiempo).substr(0, 6) + " segundos";
-        gfx.texto(mejor, 40, 18, Graficos::VERDE);
+        system("cls");
+        cout << "\n========================================\n";
+        cout << "      RESUMEN DE PRACTICA\n";
+        cout << "========================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "Intentos completados: " << intentosCompletados << "\n";
+        cout << "----------------------------------------\n";
+        cout << "Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << " segundos\n";
 
         if (intentosCompletados > 0) {
             float promedio = tiempoPromedio / intentosCompletados;
-            string prom = "Tiempo promedio: " + to_string(promedio).substr(0, 6) + " segundos";
-            gfx.texto(prom, 40, 20, Graficos::CYAN);
+            cout << "Tiempo promedio: " << fixed << setprecision(4) << promedio << " segundos\n";
         }
 
-        gfx.textoCentrado("Recuerda: Este modo NO afecta tu ranking.", 23, Graficos::AMARILLO_OSCURO);
+        cout << "========================================\n";
+        cout << "\nRecuerda: Este modo NO afecta tu ranking.\n";
 
-        gfx.mostrarCursor();
         enCurso = false;
     }
 
-    // MODO 4: Torneo - MEJORADO CON GRÁFICOS
+    // MODO 4: Torneo
     void modoTorneo(vector<string>& nombresJugadores) {
         if (nombresJugadores.size() < 4 || nombresJugadores.size() > 16) {
             cout << "Error: El torneo requiere entre 4 y 16 jugadores.\n";
@@ -425,32 +398,18 @@ public:
             };
 
         while (jugadoresActuales.size() > 1) {
-            gfx.limpiar();
-            gfx.ocultarCursor();
-            gfx.rellenarArea(0, 0, 120, 30, Graficos::MAGENTA_OSCURO);
-
             string nombreRonda = obtenerNombreRonda(jugadoresActuales.size());
-            gfx.textoCentrado("════════════════════════════════════════════", 6, Graficos::AMARILLO);
-            gfx.textoCentrado(nombreRonda, 8, Graficos::AMARILLO);
-            gfx.textoCentrado("════════════════════════════════════════════", 10, Graficos::AMARILLO);
+            Animaciones::mostrarBannerTorneo(nombreRonda, jugadoresActuales.size());
 
-            string jugadores = "Jugadores restantes: " + to_string(jugadoresActuales.size());
-            gfx.textoCentrado(jugadores, 13, Graficos::BLANCO);
+            cout << "Presiona Enter para ver los duelos...\n";
+            cin.ignore();
 
             vector<string> ganadores;
 
             for (size_t i = 0; i < jugadoresActuales.size(); i += 2) {
-                gfx.limpiar();
-                gfx.rellenarArea(0, 0, 120, 30, Graficos::ROJO_OSCURO);
-
-                string duelo = "--- Duelo " + to_string(i / 2 + 1) + " ---";
-                gfx.textoCentrado(duelo, 10, Graficos::AMARILLO);
-
-                string vs = jugadoresActuales[i] + " VS " + jugadoresActuales[i + 1];
-                gfx.textoCentrado(vs, 13, Graficos::BLANCO);
-
-                gfx.mostrarCursor();
-                gfx.textoCentrado("Presiona Enter para comenzar...", 18, Graficos::VERDE);
+                cout << "\n--- Duelo " << (i / 2 + 1) << " ---\n";
+                cout << jugadoresActuales[i] << " vs " << jugadoresActuales[i + 1] << "\n";
+                cout << "Presiona Enter para comenzar...";
                 cin.ignore();
 
                 Jugador j1(jugadoresActuales[i], 'a');
@@ -459,6 +418,8 @@ public:
                 jugador1 = j1;
                 jugador2 = j2;
 
+                system("cls");
+                cout << "\n=== " << jugadoresActuales[i] << " vs " << jugadoresActuales[i + 1] << " ===\n";
                 ejecutarRonda();
 
                 int ganador = determinarGanadorRonda();
@@ -466,22 +427,20 @@ public:
 
                 if (ganador == 1) {
                     nombreGanador = jugadoresActuales[i];
+                    cout << "\n*** " << nombreGanador << " avanza a la siguiente ronda! ***\n";
                 }
                 else if (ganador == 2) {
                     nombreGanador = jugadoresActuales[i + 1];
+                    cout << "\n*** " << nombreGanador << " avanza a la siguiente ronda! ***\n";
                 }
                 else {
                     nombreGanador = jugadoresActuales[i];
+                    cout << "\n¡Empate! " << nombreGanador << " avanza por orden.\n";
                 }
-
-                gfx.limpiar();
-                gfx.rellenarArea(0, 0, 120, 30, Graficos::VERDE_OSCURO);
-                gfx.textoCentrado("*** " + nombreGanador + " avanza a la siguiente ronda! ***", 13, Graficos::VERDE);
 
                 ganadores.push_back(nombreGanador);
 
-                gfx.mostrarCursor();
-                gfx.textoCentrado("Presiona Enter para continuar...", 20, Graficos::BLANCO);
+                cout << "\nPresiona Enter para continuar...";
                 cin.ignore();
             }
 
@@ -489,31 +448,8 @@ public:
             ronda++;
         }
 
-        // Anunciar campeón con gráficos
-        gfx.limpiar();
-        gfx.ocultarCursor();
-        gfx.rellenarArea(0, 0, 120, 30, Graficos::AMARILLO_OSCURO);
-
-        gfx.textoCentrado("════════════════════════════════════════════════════════", 5, Graficos::AMARILLO);
-        gfx.textoCentrado("                                                       ", 6, Graficos::AMARILLO);
-        gfx.textoCentrado("     *** CAMPEON DEL TORNEO ***                       ", 7, Graficos::AMARILLO);
-        gfx.textoCentrado("                                                       ", 8, Graficos::AMARILLO);
-        gfx.textoCentrado("           " + jugadoresActuales[0] + "                ", 9, Graficos::VERDE);
-        gfx.textoCentrado("                                                       ", 10, Graficos::AMARILLO);
-        gfx.textoCentrado("════════════════════════════════════════════════════════", 11, Graficos::AMARILLO);
-
-        // Trofeo ASCII
-        gfx.textoCentrado("       ___________", 14, Graficos::AMARILLO);
-        gfx.textoCentrado("      '._==_==_=_.'", 15, Graficos::AMARILLO);
-        gfx.textoCentrado("      .-\\:      /-.", 16, Graficos::AMARILLO);
-        gfx.textoCentrado("     | (|:.     |) |", 17, Graficos::AMARILLO);
-        gfx.textoCentrado("      '-|:.     |-'", 18, Graficos::AMARILLO);
-        gfx.textoCentrado("        \\::.    /", 19, Graficos::AMARILLO);
-        gfx.textoCentrado("         '::. .'", 20, Graficos::AMARILLO);
-        gfx.textoCentrado("           ) (", 21, Graficos::AMARILLO);
-        gfx.textoCentrado("         _.' '._", 22, Graficos::AMARILLO);
-
-        gfx.textoCentrado("¡Felicidades! Has ganado el torneo!", 24, Graficos::VERDE);
+        Animaciones::mostrarCampeonTorneo(jugadoresActuales[0]);
+        cout << "\n¡Felicidades " << jugadoresActuales[0] << "! Has ganado el torneo!\n";
 
         Jugador campeon(jugadoresActuales[0], 'a');
         campeon.incrementarVictorias();
@@ -526,12 +462,186 @@ public:
 
         contenedor.guardarDatos(campeon, dummy);
 
-        gfx.mostrarCursor();
-        gfx.resetColor();
         enCurso = false;
     }
 
-    // Método legacy
+    // MODO 5: Desafío de Velocidad
+    void modoDesafioVelocidad(Jugador& jugador, int numeroRondas = 10) {
+        enCurso = true;
+        float tiempoEspera = 3.0f;
+        int puntosTotales = 0;
+        int rondasCompletadas = 0;
+        int errores = 0;
+        float mejorTiempo = 0;
+
+        cout << "\n============================================\n";
+        cout << "      DESAFIO DE VELOCIDAD\n";
+        cout << "============================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "Rondas: " << numeroRondas << "\n";
+        cout << "Tecla: [" << jugador.getTecla() << "]\n";
+        cout << "============================================\n";
+        cout << "\nReglas:\n";
+        cout << "- Reacciona lo mas rapido posible\n";
+        cout << "- La dificultad aumenta cada ronda\n";
+        cout << "- Mas rapido = Mas puntos\n";
+        cout << "- Los errores restan puntos\n";
+        cout << "\nPresiona Enter para comenzar...";
+        cin.ignore();
+
+        for (int ronda = 1; ronda <= numeroRondas; ronda++) {
+            system("cls");
+            cout << "\n============================================\n";
+            cout << "    RONDA " << ronda << " DE " << numeroRondas << "\n";
+            cout << "============================================\n";
+            cout << "Puntos actuales: " << puntosTotales << "\n";
+            cout << "Errores: " << errores << "\n";
+            if (mejorTiempo > 0) {
+                cout << "Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+            }
+            cout << "============================================\n\n";
+
+            cout << "Preparate...\n";
+
+            int esperaAleatoria = (rand() % 2000) + 1000;
+            this_thread::sleep_for(chrono::milliseconds(esperaAleatoria));
+
+            cout << "\n¡AHORA!\n";
+            Animaciones::mostrarDisparoSimple();
+
+            temporizador.iniciar();
+            bool teclaPresionada = false;
+            bool teclaCorrecta = false;
+            float tiempoReaccion = 0;
+
+            auto tiempoLimite = high_resolution_clock::now() + chrono::seconds(2);
+
+            while (!teclaPresionada && high_resolution_clock::now() < tiempoLimite) {
+                if (_kbhit()) {
+                    char tecla = _getch();
+                    temporizador.detener();
+                    tiempoReaccion = temporizador.obtenerDiferencia();
+                    teclaPresionada = true;
+
+                    if (tecla == jugador.getTecla()) {
+                        teclaCorrecta = true;
+                    }
+                }
+            }
+
+            int puntosRonda = 0;
+
+            if (!teclaPresionada) {
+                cout << "\n¡Muy lento! No respondiste a tiempo.\n";
+                puntosRonda = -50;
+                errores++;
+            }
+            else if (!teclaCorrecta) {
+                cout << "\n¡Tecla incorrecta!\n";
+                puntosRonda = -30;
+                errores++;
+            }
+            else {
+                rondasCompletadas++;
+                cout << "\nTiempo: " << fixed << setprecision(4) << tiempoReaccion << "s\n";
+
+                if (mejorTiempo == 0 || tiempoReaccion < mejorTiempo) {
+                    mejorTiempo = tiempoReaccion;
+                }
+
+                if (tiempoReaccion < 0.15) {
+                    puntosRonda = 200;
+                    cout << "¡INCREIBLE! +200 puntos\n";
+                }
+                else if (tiempoReaccion < 0.20) {
+                    puntosRonda = 150;
+                    cout << "¡EXCELENTE! +150 puntos\n";
+                }
+                else if (tiempoReaccion < 0.30) {
+                    puntosRonda = 100;
+                    cout << "¡MUY BIEN! +100 puntos\n";
+                }
+                else if (tiempoReaccion < 0.40) {
+                    puntosRonda = 75;
+                    cout << "¡BIEN! +75 puntos\n";
+                }
+                else if (tiempoReaccion < 0.50) {
+                    puntosRonda = 50;
+                    cout << "¡ACEPTABLE! +50 puntos\n";
+                }
+                else {
+                    puntosRonda = 25;
+                    cout << "¡LENTO! +25 puntos\n";
+                }
+
+                if (errores == 0 && ronda >= 5) {
+                    int bonus = 50;
+                    puntosRonda += bonus;
+                    cout << "¡RACHA PERFECTA! +" << bonus << " puntos bonus\n";
+                }
+            }
+
+            puntosTotales += puntosRonda;
+            if (puntosRonda > 0) {
+                cout << "\n++" << puntosRonda << " puntos\n";
+            }
+            else {
+                cout << "\n" << puntosRonda << " puntos\n";
+            }
+
+            cout << "Total: " << puntosTotales << " puntos\n";
+
+            tiempoEspera = max(0.5f, tiempoEspera - 0.1f);
+
+            if (ronda < numeroRondas) {
+                cout << "\nPresiona Enter para la siguiente ronda...";
+                cin.ignore();
+            }
+        }
+
+        system("cls");
+        cout << "\n================================================\n";
+        cout << "      DESAFIO DE VELOCIDAD COMPLETADO\n";
+        cout << "================================================\n";
+        cout << "Jugador: " << jugador.getNombre() << "\n";
+        cout << "------------------------------------------------\n";
+        cout << "Rondas completadas: " << rondasCompletadas << "/" << numeroRondas << "\n";
+        cout << "Errores: " << errores << "\n";
+        cout << "Mejor tiempo: " << fixed << setprecision(4) << mejorTiempo << "s\n";
+        cout << "------------------------------------------------\n";
+        cout << "PUNTUACION FINAL: " << puntosTotales << " puntos\n";
+        cout << "================================================\n\n";
+
+        if (puntosTotales >= 1500) {
+            cout << "¡MAESTRO DE LA VELOCIDAD! Eres increible!\n";
+        }
+        else if (puntosTotales >= 1000) {
+            cout << "¡EXPERTO! Excelentes reflejos!\n";
+        }
+        else if (puntosTotales >= 700) {
+            cout << "¡COMPETENTE! Buen desempeno!\n";
+        }
+        else if (puntosTotales >= 400) {
+            cout << "¡PRINCIPIANTE! Sigue practicando!\n";
+        }
+        else {
+            cout << "¡NOVATO! Necesitas mas entrenamiento!\n";
+        }
+
+        jugador.setVictorias(puntosTotales);
+        jugador.setPartidas(numeroRondas);
+        jugador.registrarTiempo(mejorTiempo);
+        jugador.setModoJuego("velocidad");
+
+        Jugador dummy("", 'l');
+        dummy.setModoJuego("velocidad");
+
+        contenedor.guardarDatos(jugador, dummy);
+
+        enCurso = false;
+    }
+
+    // Método legacy para mantener compatibilidad
     void iniciarJuego() {
         modoDueloClasico();
     }
