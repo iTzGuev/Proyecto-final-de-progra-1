@@ -26,10 +26,46 @@ int leerOpcionSegura(int min, int max) {
     }
 }
 
+// Función para validar que el nombre solo contenga letras y espacios
+bool nombreValido(const string& nombre) {
+    if (nombre.empty()) {
+        return false;
+    }
+
+    for (size_t i = 0; i < nombre.length(); i++) {
+        char c = nombre[i];
+        // Permitir letras (mayúsculas y minúsculas) y espacios
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ')) {
+            return false;
+        }
+    }
+
+    // Verificar que no sea solo espacios
+    bool tieneLetras = false;
+    for (size_t i = 0; i < nombre.length(); i++) {
+        if (nombre[i] != ' ') {
+            tieneLetras = true;
+            break;
+        }
+    }
+
+    return tieneLetras;
+}
+
 // Función para validar que los nombres no sean vacíos ni duplicados
 bool validarNombres(string& nombre1, string& nombre2) {
     if (nombre1.empty() || nombre2.empty()) {
         cout << "\nError: Los nombres no pueden estar vacios.\n";
+        return false;
+    }
+
+    if (!nombreValido(nombre1)) {
+        cout << "\nError: El nombre del Jugador 1 solo puede contener letras y espacios.\n";
+        return false;
+    }
+
+    if (!nombreValido(nombre2)) {
+        cout << "\nError: El nombre del Jugador 2 solo puede contener letras y espacios.\n";
         return false;
     }
 
@@ -154,7 +190,10 @@ void menuModosJuego() {
                 if (nombre.empty()) {
                     cout << "El nombre no puede estar vacio.\n";
                 }
-            } while (nombre.empty());
+                else if (!nombreValido(nombre)) {
+                    cout << "El nombre solo puede contener letras y espacios.\n";
+                }
+            } while (nombre.empty() || !nombreValido(nombre));
 
             cout << "\nCuantos intentos deseas realizar?\n";
             cout << "1. 3 intentos\n";
@@ -210,20 +249,23 @@ void menuModosJuego() {
             cout << "\n--- Ingrese los nombres de los jugadores ---\n";
             for (int i = 1; i <= cantidadJugadores; i++) {
                 string nombre;
-                bool nombreValido = false;
+                bool nombreValidoFlag = false;
 
-                while (!nombreValido) {
+                while (!nombreValidoFlag) {
                     cout << "Jugador " << i << ": ";
                     getline(cin, nombre);
 
                     if (nombre.empty()) {
                         cout << "El nombre no puede estar vacio.\n";
                     }
+                    else if (!nombreValido(nombre)) {
+                        cout << "El nombre solo puede contener letras y espacios.\n";
+                    }
                     else if (nombresUnicos.find(nombre) != nombresUnicos.end()) {
                         cout << "Ese nombre ya fue usado. Ingrese otro.\n";
                     }
                     else {
-                        nombreValido = true;
+                        nombreValidoFlag = true;
                         nombresJugadores.push_back(nombre);
                         nombresUnicos.insert(nombre);
                     }
@@ -258,7 +300,10 @@ void menuModosJuego() {
                 if (nombre.empty()) {
                     cout << "El nombre no puede estar vacio.\n";
                 }
-            } while (nombre.empty());
+                else if (!nombreValido(nombre)) {
+                    cout << "El nombre solo puede contener letras y espacios.\n";
+                }
+            } while (nombre.empty() || !nombreValido(nombre));
 
             cout << "\nSeleccione cantidad de rondas:\n";
             cout << "1. 5 rondas (Rapido)\n";
